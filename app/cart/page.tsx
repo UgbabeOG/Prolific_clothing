@@ -4,19 +4,19 @@ import { Footer } from '@/components/layout/Footer';
 
 export default function CartPage() {
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
         <div className="grid gap-10 xl:grid-cols-[1.4fr_0.6fr]">
-          <section className="space-y-6 rounded-[28px] border border-white/10 bg-[#100f0d] p-10">
+          <section className="space-y-6 rounded-[28px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">Cart</p>
             <h1 className="text-4xl font-serif text-white">Your selected pieces.</h1>
             <div className="space-y-6">
               {[1, 2].map((item) => (
-                <div key={item} className="grid gap-4 rounded-[24px] border border-white/10 bg-[#0d0b09] p-6 sm:grid-cols-[0.9fr_0.4fr]">
+                <div key={item} className="grid gap-4 rounded-[24px] border border-white/10 bg-[#0d0b09] p-6 sm:grid-cols-[0.9fr_0.4fr]" style={{ backgroundColor: 'var(--bg-card)' }}>
                   <div className="flex items-center gap-4">
-                    <div className="h-24 w-24 rounded-[18px] bg-[#14110f]" />
+                    <div className="h-24 w-24 rounded-[18px] bg-[#14110f]" style={{ backgroundColor: 'var(--bg-card)' }} />
                     <div>
                       <p className="text-sm uppercase tracking-[0.26em] text-[#d3b88b]">Tailored Shirt</p>
                       <h2 className="mt-3 text-xl font-serif text-white">Prolific Signature Shirt</h2>
@@ -36,7 +36,7 @@ export default function CartPage() {
             </div>
           </section>
 
-          <aside className="rounded-[28px] border border-white/10 bg-[#100f0d] p-10">
+          <aside className="rounded-[28px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">Summary</p>
             <div className="mt-8 space-y-4 text-sm text-[#b8ac9a]">
               <div className="flex items-center justify-between">

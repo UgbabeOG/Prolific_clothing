@@ -7,12 +7,14 @@ export function CollectionCard({ collection }: { collection: Collection }) {
     <Link
       href={`/shop?collection=${collection.slug}`}
       className="group relative overflow-hidden rounded-[22px] border border-white/10 bg-[#100f0d] transition hover:-translate-y-1 hover:border-gold/40"
+      style={{ backgroundColor: 'var(--bg-elevated)' }}
     >
       <div className="relative h-72 sm:h-80 lg:h-96">
         <Image
           src={collection.image}
           alt={collection.name}
           fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-cover transition duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />

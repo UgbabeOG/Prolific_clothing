@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 
 export default function ContactPage() {
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
@@ -30,31 +30,31 @@ export default function ContactPage() {
               </p>
             </div>
           </div>
-          <div className="rounded-[28px] border border-white/10 bg-[#100f0d] p-10">
+          <div className="rounded-[28px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <form className="space-y-6">
               <div>
                 <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="name">
                   Name
                 </label>
-                <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="name" name="name" type="text" />
+                <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="name" name="name" type="text" />
               </div>
               <div>
                 <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="email">
                   Email
                 </label>
-                <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="email" name="email" type="email" />
+                <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="email" name="email" type="email" />
               </div>
               <div>
                 <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="phone">
                   Phone
                 </label>
-                <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="phone" name="phone" type="tel" />
+                <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="phone" name="phone" type="tel" />
               </div>
               <div>
                 <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="inquiry">
                   Inquiry Type
                 </label>
-                <select className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="inquiry" name="inquiry">
+                <select className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="inquiry" name="inquiry">
                   <option>General Inquiry</option>
                   <option>Bespoke</option>
                   <option>Product</option>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                 <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="message">
                   Message
                 </label>
-                <textarea className="mt-3 h-36 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="message" name="message" />
+                <textarea className="theme-input mt-3 h-36 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="message" name="message" />
               </div>
               <button type="submit" className="inline-flex w-full items-center justify-center rounded-[18px] bg-white px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#0f0d0b] transition hover:bg-[#f2ede4]">
                 Send inquiry

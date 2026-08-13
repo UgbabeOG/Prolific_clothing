@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 const footerNav = [
   { label: 'Shop', href: '/shop' },
@@ -14,7 +15,10 @@ export function Footer() {
     <footer className="border-t border-white/10 bg-[#0b0907] px-6 py-16 sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
         <div className="space-y-4">
-          <p className="text-sm uppercase tracking-[0.28em] text-[#d3b88b]">Prolific Clothing</p>
+          <div className="flex items-center gap-3">
+            <Image src="/assets/OB_monogram_white.svg" alt="Prolific Clothing" width={32} height={32} className="h-8 w-8" />
+            <p className="text-sm uppercase tracking-[0.28em] text-[#d3b88b]">Prolific Clothing</p>
+          </div>
           <h2 className="max-w-sm text-3xl font-serif leading-tight text-white sm:text-4xl">Crafted for Distinguished Men.</h2>
           <p className="max-w-sm text-sm leading-7 text-[#b8a88d]">
             Luxury African menswear designed with precision, quiet confidence, and refined craftsmanship from Abuja.

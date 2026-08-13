@@ -13,8 +13,9 @@ export function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const product = products.find((item) => item.slug === params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const product = products.find((item) => item.slug === slug);
   if (!product) {
     return { title: 'Product not found' };
   }
@@ -24,8 +25,9 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = products.find((item) => item.slug === params.slug);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = products.find((item) => item.slug === slug);
   if (!product) {
     notFound();
   }
@@ -33,7 +35,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   const whatsappHref = createWhatsAppLink(productInquiryMessage(product.name));
 
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
@@ -48,7 +50,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          <aside className="space-y-8 rounded-[32px] border border-white/10 bg-[#100f0d] p-10">
+          <aside className="space-y-8 rounded-[32px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">{product.category}</p>
             <h1 className="text-5xl font-serif leading-tight text-white">{product.name}</h1>
             <p className="text-lg leading-8 text-[#b8ac9a]">{product.description}</p>
@@ -59,7 +61,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Size</p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   {product.sizes.map((size) => (
-                    <button key={size} type="button" className="rounded-[14px] border border-white/10 bg-[#0f0d0b] px-4 py-3 text-sm uppercase tracking-[0.24em] text-[#f7f1e8] transition hover:border-gold">
+                    <button key={size} type="button" className="rounded-[14px] border border-white/10 bg-[#0f0d0b] px-4 py-3 text-sm uppercase tracking-[0.24em] text-[#f7f1e8] transition hover:border-gold" style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text)' }}>
                       {size}
                     </button>
                   ))}
@@ -69,7 +71,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Color</p>
                 <div className="mt-4 flex items-center gap-3">
                   {product.colors.map((color) => (
-                    <button key={color.name} type="button" className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-[#0f0d0b] px-4 py-3 text-sm text-[#f7f1e8] transition hover:border-gold">
+                    <button key={color.name} type="button" className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-[#0f0d0b] px-4 py-3 text-sm text-[#f7f1e8] transition hover:border-gold" style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text)' }}>
                       <span className="h-4 w-4 rounded-full border border-white/10" style={{ backgroundColor: color.hex }} />
                       {color.name}
                     </button>
@@ -80,7 +82,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
             <ProductPurchaseForm product={product} whatsappHref={whatsappHref} />
 
-            <div className="space-y-6 rounded-[26px] border border-white/10 bg-[#0d0b09] p-6 text-sm text-[#b8ac9a]">
+            <div className="space-y-6 rounded-[26px] border border-white/10 bg-[#0d0b09] p-6 text-sm text-[#b8ac9a]" style={{ backgroundColor: 'var(--bg-card)' }}>
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Product Details</p>
                 <p className="mt-4 leading-7">{product.shortDescription}</p>
@@ -101,7 +103,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           </aside>
         </div>
 
-        <section className="mt-20 space-y-8 rounded-[32px] border border-white/10 bg-[#100f0d] p-10">
+        <section className="mt-20 space-y-8 rounded-[32px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">Related</p>
@@ -113,7 +115,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           </div>
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {products.slice(0, 4).map((item) => (
-              <Link key={item.id} href={`/products/${item.slug}`} className="rounded-[24px] border border-white/10 bg-[#0d0b09] p-5 transition hover:border-gold">
+              <Link key={item.id} href={`/products/${item.slug}`} className="rounded-[24px] border border-white/10 bg-[#0d0b09] p-5 transition hover:border-gold" style={{ backgroundColor: 'var(--bg-card)' }}>
                 <div className="relative h-56 overflow-hidden rounded-[20px] bg-[#11100d]">
                   <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
                 </div>

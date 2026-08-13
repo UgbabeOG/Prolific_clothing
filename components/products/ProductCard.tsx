@@ -8,12 +8,13 @@ export function ProductCard({ product }: { product: Product }) {
   const enquiryHref = createWhatsAppLink(productInquiryMessage(product.name));
 
   return (
-    <div className="group relative overflow-hidden rounded-[26px] bg-[#100f0d] border border-white/10 transition hover:-translate-y-1">
+    <div className="group relative overflow-hidden rounded-[26px] border border-white/10 bg-[#100f0d] transition hover:-translate-y-1" style={{ backgroundColor: 'var(--bg-elevated)' }}>
       <div className="relative h-96 overflow-hidden bg-[#16120f]">
         <Image
           src={product.images[0]}
           alt={product.name}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
           className="object-cover transition duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

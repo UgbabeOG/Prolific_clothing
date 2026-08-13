@@ -8,7 +8,7 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="relative h-[85vh] min-h-[680px] sm:h-[90vh]">
-        <Image src="/assets/hero_showroom.png" alt="Prolific Clothing showroom" fill className="object-cover" priority />
+        <Image src="/assets/hero_showroom.png" alt="Prolific Clothing showroom" fill sizes="100vw" className="object-cover" priority />
         <div className="absolute inset-0 bg-black/55" />
       </div>
       <div className="absolute inset-x-0 top-1/3 mx-auto flex max-w-7xl px-6 sm:px-8">

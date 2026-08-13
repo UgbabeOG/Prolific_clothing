@@ -12,10 +12,11 @@ type ShopSearchParams = {
   sort?: string;
 };
 
-export default function ShopPage({ searchParams }: { searchParams?: ShopSearchParams }) {
-  const searchTerm = searchParams?.search?.trim().toLowerCase() ?? '';
-  const collection = searchParams?.collection?.trim().toLowerCase() ?? '';
-  const sort = searchParams?.sort;
+export default async function ShopPage({ searchParams }: { searchParams?: Promise<ShopSearchParams> }) {
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const searchTerm = resolvedSearchParams?.search?.trim().toLowerCase() ?? '';
+  const collection = resolvedSearchParams?.collection?.trim().toLowerCase() ?? '';
+  const sort = resolvedSearchParams?.sort;
 
   const filteredProducts = products
     .filter((product) => {
@@ -41,7 +42,7 @@ export default function ShopPage({ searchParams }: { searchParams?: ShopSearchPa
     : 'All products';
 
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
@@ -57,7 +58,7 @@ export default function ShopPage({ searchParams }: { searchParams?: ShopSearchPa
         </div>
 
         <div className="mt-14 grid gap-10 lg:grid-cols-[0.4fr_1fr]">
-          <aside className="space-y-8 rounded-[28px] border border-white/10 bg-[#100f0d] p-8 text-sm text-[#b9a887]">
+          <aside className="space-y-8 rounded-[28px] border border-white/10 bg-[#100f0d] p-8 text-sm text-[#b9a887]" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Category</p>
               <ul className="mt-6 space-y-4">
@@ -94,7 +95,7 @@ export default function ShopPage({ searchParams }: { searchParams?: ShopSearchPa
 
           <section className="space-y-10">
             {filteredProducts.length === 0 ? (
-              <div className="rounded-[28px] border border-white/10 bg-[#100f0d] p-12 text-center text-[#b8ac9a]">
+              <div className="rounded-[28px] border border-white/10 bg-[#100f0d] p-12 text-center text-[#b8ac9a]" style={{ backgroundColor: 'var(--bg-elevated)' }}>
                 <p className="text-lg text-white">No products found.</p>
                 <p className="mt-4">Try another search term or explore one of our curated collections.</p>
               </div>

@@ -4,12 +4,12 @@ import { Footer } from '@/components/layout/Footer';
 
 export default function CheckoutPage() {
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
         <div className="grid gap-14 xl:grid-cols-[1.2fr_0.8fr]">
-          <section className="rounded-[28px] border border-white/10 bg-[#100f0d] p-10">
+          <section className="rounded-[28px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">Checkout</p>
             <h1 className="mt-6 text-4xl font-serif text-white">Complete your order with quiet luxury.</h1>
             <div className="mt-12 space-y-10">
@@ -18,13 +18,13 @@ export default function CheckoutPage() {
                   <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="email">
                     Email
                   </label>
-                  <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="email" type="email" />
+                  <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="email" type="email" />
                 </div>
                 <div>
                   <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="phone">
                     Phone
                   </label>
-                  <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="phone" type="tel" />
+                  <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="phone" type="tel" />
                 </div>
               </div>
               <div className="grid gap-6 sm:grid-cols-2">
@@ -32,13 +32,13 @@ export default function CheckoutPage() {
                   <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="address">
                     Delivery Address
                   </label>
-                  <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="address" type="text" />
+                  <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="address" type="text" />
                 </div>
                 <div>
                   <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="city">
                     City
                   </label>
-                  <input className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="city" type="text" />
+                  <input className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="city" type="text" />
                 </div>
               </div>
               <div className="grid gap-6 sm:grid-cols-2">
@@ -46,7 +46,7 @@ export default function CheckoutPage() {
                   <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="payment">
                     Payment method
                   </label>
-                  <select className="mt-3 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="payment">
+                  <select className="theme-input mt-3 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="payment">
                     <option>Card payment</option>
                     <option>Bank transfer</option>
                     <option>Cash on delivery</option>
@@ -56,12 +56,12 @@ export default function CheckoutPage() {
                   <label className="block text-sm uppercase tracking-[0.22em] text-[#d3b88b]" htmlFor="notes">
                     Order notes
                   </label>
-                  <textarea className="mt-3 h-36 w-full rounded-[16px] border border-white/10 bg-[#0c0a08] px-4 py-4 text-sm text-white outline-none transition focus:border-gold" id="notes" />
+                  <textarea className="theme-input mt-3 h-36 w-full rounded-[16px] border border-white/10 px-4 py-4 text-sm outline-none transition focus:border-gold" id="notes" />
                 </div>
               </div>
             </div>
           </section>
-          <aside className="space-y-8 rounded-[28px] border border-white/10 bg-[#100f0d] p-10">
+          <aside className="space-y-8 rounded-[28px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <div>
               <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">Order Summary</p>
               <div className="mt-6 space-y-4 text-sm text-[#b8ac9a]">

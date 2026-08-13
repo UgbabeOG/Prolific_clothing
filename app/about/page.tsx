@@ -4,7 +4,7 @@ import { Footer } from '@/components/layout/Footer';
 
 export default function AboutPage() {
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
@@ -16,7 +16,7 @@ export default function AboutPage() {
               Prolific Clothing is a luxury menswear brand with over 14 years of tailoring experience. Our story is shaped by craftsmanship, precision, and a quiet confidence that elevates every collection.
             </p>
           </div>
-          <div className="space-y-6 rounded-[28px] border border-white/10 bg-[#100f0d] p-10">
+          <div className="space-y-6 rounded-[28px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <p className="text-sm leading-8 text-[#c3b49c]">
               We craft modern African menswear with deliberate attention to proportion, texture, and finish. Each garment is designed to feel premium, understated, and purposeful.
             </p>
@@ -41,7 +41,7 @@ export default function AboutPage() {
               text: 'A modern take on African menswear rooted in luxury.'
             },
           ].map((item) => (
-            <div key={item.title} className="rounded-[24px] border border-white/10 bg-[#100f0d] p-8 text-sm text-[#c2b49d]">
+            <div key={item.title} className="rounded-[24px] border border-white/10 bg-[#100f0d] p-8 text-sm text-[#c2b49d]" style={{ backgroundColor: 'var(--bg-elevated)' }}>
               <h2 className="text-2xl font-serif text-white">{item.title}</h2>
               <p className="mt-4 leading-8">{item.text}</p>
             </div>

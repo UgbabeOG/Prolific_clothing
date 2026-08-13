@@ -8,7 +8,7 @@ export default function BespokePage() {
   const whatsappHref = createWhatsAppLink(generalInquiryMessage);
 
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
@@ -43,7 +43,7 @@ export default function BespokePage() {
               description: 'Your piece is carefully constructed and refined.',
             },
           ].map((step, index) => (
-            <div key={step.title} className="rounded-[24px] border border-white/10 bg-[#100f0d] p-8 text-sm text-[#c2b49d]">
+            <div key={step.title} className="rounded-[24px] border border-white/10 bg-[#100f0d] p-8 text-sm text-[#c2b49d]" style={{ backgroundColor: 'var(--bg-elevated)' }}>
               <p className="text-sm uppercase tracking-[0.3em] text-[#d3b88b]">0{index + 1}</p>
               <h2 className="mt-5 text-2xl font-serif text-white">{step.title}</h2>
               <p className="mt-4 leading-8">{step.description}</p>

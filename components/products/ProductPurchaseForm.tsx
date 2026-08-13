@@ -22,6 +22,7 @@ export function ProductPurchaseForm({ product, whatsappHref }: { product: Produc
         target="_blank"
         rel="noreferrer"
         className="inline-flex w-full items-center justify-center rounded-[18px] border border-white/10 bg-[#11100d] px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-white transition hover:border-gold hover:text-gold"
+        style={{ backgroundColor: 'var(--bg-card)' }}
       >
         Inquiry via WhatsApp
       </a>

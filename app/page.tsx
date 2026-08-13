@@ -13,18 +13,18 @@ export default function HomePage() {
   const whatsappHref = createWhatsAppLink(generalInquiryMessage);
 
   return (
-    <div className="bg-[#0b0907] text-[#f7f1e8]">
+    <div className="bg-[var(--bg)] text-[var(--text)]">
       <AnnouncementBar />
       <Header />
       <main className="overflow-hidden">
         <Hero />
 
-        <section className="bg-[#f7f1e8] text-[#0c0a08]">
+        <section className="bg-[var(--cream)] text-[var(--text)]">
           <div className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
             <div className="grid gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
               <div>
                 <p className="text-xs uppercase tracking-[0.32em] text-[#a78c6f]">THE PROLIFIC STANDARD</p>
-                <h2 className="mt-6 text-5xl font-serif leading-tight tracking-[-0.03em] sm:text-6xl">Crafted for Distinguished Men.</h2>
+                <h2 className="mt-6 text-5xl font-serif leading-tight tracking-[-0.03em] text-[#0b0907] sm:text-6xl">Crafted for Distinguished Men.</h2>
               </div>
               <div className="space-y-6 border-l border-black/10 pl-0 lg:pl-16">
                 <p className="text-lg leading-9 text-[#50473b]">
@@ -36,11 +36,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-6 py-24 sm:px-8">
+        <section className="mx-auto max-w-7xl px-6 py-24 sm:px-8" style={{ color: 'var(--text)' }}>
           <SectionHeading
             eyebrow="The Collections"
             title="A refined wardrobe of elevated essentials."
-            description="Explore the collection blocks that capture the quiet luxury of modern African menswear." 
+            description="Explore the collection blocks that capture the quiet luxury of modern African menswear."
           />
           <div className="mt-12 grid gap-8 lg:grid-cols-2">
             {collections.map((collection) => (
@@ -74,7 +74,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-[#100f0d] px-6 py-24 sm:px-8">
+        <section className="bg-[var(--bg-elevated)] px-6 py-24 sm:px-8">
           <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div className="space-y-6">
               <p className="text-xs uppercase tracking-[0.32em] text-[#d3b88b]">Every Detail Matters</p>
@@ -109,7 +109,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="bg-[#0c0a08] px-6 py-24 sm:px-8">
+        <section className="bg-[var(--bg-overlay)] px-6 py-24 sm:px-8">
           <div className="mx-auto max-w-7xl rounded-[30px] border border-white/10 bg-[#15120f] px-8 py-16 lg:px-12">
             <div className="grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
               <div>

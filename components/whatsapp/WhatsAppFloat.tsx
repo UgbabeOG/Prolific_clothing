@@ -11,9 +11,9 @@ export function WhatsAppFloat() {
       href={whatsappHref}
       target="_blank"
       rel="noreferrer"
-      className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/10 bg-[#f7f1e8] px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#14110e] shadow-[0_14px_40px_rgba(0,0,0,0.18)] transition hover:border-gold hover:bg-[#fcf7ef] md:left-auto md:right-5 md:translate-x-0"
+      className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/10 bg-[var(--bg-elevated)] px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[var(--text)] shadow-[0_14px_40px_rgba(0,0,0,0.18)] transition hover:border-gold md:left-auto md:right-5 md:translate-x-0"
     >
-      <span className="mr-3 inline-flex items-center justify-center rounded-full bg-[#14110e] p-2 text-white">
+      <span className="mr-3 inline-flex items-center justify-center rounded-full bg-[var(--text)] p-2 text-[var(--bg)]">
         <MessageSquare size={16} />
       </span>
       Chat on WhatsApp
