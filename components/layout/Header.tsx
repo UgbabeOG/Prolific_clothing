@@ -51,7 +51,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <button
             type="button"
-            className="header-btn md:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold"
+            className="header-btn lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold"
             onClick={() => setMobileOpen(true)}
             aria-label="Open navigation menu"
             data-tooltip="Menu"
@@ -72,7 +72,7 @@ export function Header() {
           </Link>
         </div>
 
-        <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
+        <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -88,7 +88,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold md:inline-flex"
+            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
             aria-label="Search site"
             onClick={() => setSearchOpen(true)}
             data-tooltip="Search"
@@ -97,7 +97,7 @@ export function Header() {
           </button>
           <button
             type="button"
-            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold md:inline-flex"
+            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
             aria-label="Account"
             data-tooltip="Account"
           >
@@ -105,7 +105,7 @@ export function Header() {
           </button>
           <button
             type="button"
-            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold md:inline-flex"
+            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
             aria-label="Wishlist"
             data-tooltip="Wishlist"
           >
