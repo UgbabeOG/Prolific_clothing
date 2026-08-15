@@ -1,4 +1,12 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/about/page": "app/about/page.js",
+  "/bespoke/page": "app/bespoke/page.js",
+  "/cart/page": "app/cart/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/contact/page": "app/contact/page.js",
   "/page": "app/page.js",
-  "/studio/page": "app/studio/page.js"
+  "/shop/page": "app/shop/page.js",
+  "/studio/page": "app/studio/page.js",
+  "/products/[slug]/page": "app/products/[slug]/page.js"
 }
