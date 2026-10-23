@@ -1,4 +1,4 @@
-// File: /workspaces/Prolific_clothing/app/about/page.tsx
+// File: /home/gugbabe/projects/Prolific_clothing/app/about/page.tsx
 import * as entry from '../../../../app/about/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

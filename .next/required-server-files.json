@@ -99,7 +99,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/workspaces/Prolific_clothing",
+    "outputFileTracingRoot": "/home/gugbabe/projects/Prolific_clothing",
     "experimental": {
       "useSkewCookie": false,
       "cacheLife": {
@@ -158,7 +158,7 @@
       "middlewarePrefetch": "flexible",
       "optimisticClientCache": true,
       "manualClientBasePath": false,
-      "cpus": 1,
+      "cpus": 11,
       "memoryBasedWorkersCount": false,
       "imgOptConcurrency": null,
       "imgOptTimeoutInSeconds": 7,
@@ -288,10 +288,10 @@
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.mjs",
     "turbopack": {
-      "root": "/workspaces/Prolific_clothing"
+      "root": "/home/gugbabe/projects/Prolific_clothing"
     }
   },
-  "appDir": "/workspaces/Prolific_clothing",
+  "appDir": "/home/gugbabe/projects/Prolific_clothing",
   "relativeAppDir": "",
   "files": [
     ".next/routes-manifest.json",

@@ -26,6 +26,14 @@
         "nxtPslug": "nxtPslug"
       },
       "namedRegex": "^/products/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/styles/[styleId]",
+      "regex": "^/styles/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPstyleId": "nxtPstyleId"
+      },
+      "namedRegex": "^/styles/(?<nxtPstyleId>[^/]+?)(?:/)?$"
     }
   ],
   "staticRoutes": [
@@ -46,6 +54,12 @@
       "regex": "^/about(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin/styles",
+      "regex": "^/admin/styles(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/styles(?:/)?$"
     },
     {
       "page": "/bespoke",
@@ -82,6 +96,12 @@
       "regex": "^/studio(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/studio(?:/)?$"
+    },
+    {
+      "page": "/styles",
+      "regex": "^/styles(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/styles(?:/)?$"
     }
   ],
   "dataRoutes": [],

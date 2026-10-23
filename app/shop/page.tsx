@@ -20,8 +20,22 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
 
   const filteredProducts = products
     .filter((product) => {
-      if (collection && collection !== 'all' && product.category.toLowerCase() !== collection) {
-        return false;
+      if (collection && collection !== 'all') {
+        const categoryLower = product.category.toLowerCase();
+        const collectionNormalized = collection.replace(/-/g, ' ');
+        // Also handle direct matches and common variations
+        const matches =
+          categoryLower === collection ||
+          categoryLower === collectionNormalized ||
+          categoryLower.replace(/-/g, ' ') === collectionNormalized ||
+          (collection === 'native-wear' && categoryLower.includes('native')) ||
+          (collection === 'shirts' && categoryLower.includes('shirt')) ||
+          (collection === 'trousers' && categoryLower.includes('trouser')) ||
+          (collection === 't-shirts' && categoryLower.includes('t-shirt')) ||
+          (collection === 'ready-to-wear' && (categoryLower.includes('ready') || categoryLower.includes('shirt') || categoryLower.includes('trouser')));
+        if (!matches) {
+          return false;
+        }
       }
       if (!searchTerm) {
         return true;
@@ -38,7 +52,7 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
   const statusLabel = searchTerm
     ? `Search results for “${searchTerm}”`
     : collection && collection !== 'all'
-    ? `Filtering ${collection}`
+    ? `Filtering ${collection.replace(/-/g, ' ')}`
     : 'All products';
 
   return (

@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react';
 import { MobileMenu } from './MobileMenu';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useCart } from '@/lib/cart/CartContext';
 
 const navItems = [
   { label: 'Shop', href: '/shop' },
@@ -23,6 +24,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isLightTheme, setIsLightTheme] = useState(false);
+  const { toggleCart, itemCount } = useCart();
 
   useEffect(() => {
     const syncTheme = () => setIsLightTheme(document.documentElement.getAttribute('data-theme') === 'light');
@@ -115,11 +117,17 @@ export function Header() {
           <ThemeToggle />
           <button
             type="button"
-            className="header-btn inline-flex h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold"
+            onClick={toggleCart}
+            className="header-btn relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold"
             aria-label="Shopping Bag"
             data-tooltip="Shopping Bag"
           >
             <ShoppingBag size={18} />
+            {itemCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gold px-1 text-[10px] font-semibold text-[#0f0d0b]">
+                {itemCount}
+              </span>
+            )}
           </button>
         </div>
       </div>

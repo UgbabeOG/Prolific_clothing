@@ -1,12 +1,16 @@
 {
   "/_not-found/page": "/_not-found",
-  "/about/page": "/about",
+  "/api/styles/route": "/api/styles",
   "/bespoke/page": "/bespoke",
+  "/about/page": "/about",
   "/cart/page": "/cart",
   "/checkout/page": "/checkout",
   "/contact/page": "/contact",
   "/page": "/",
-  "/shop/page": "/shop",
   "/studio/page": "/studio",
-  "/products/[slug]/page": "/products/[slug]"
+  "/shop/page": "/shop",
+  "/admin/styles/page": "/admin/styles",
+  "/products/[slug]/page": "/products/[slug]",
+  "/styles/[styleId]/page": "/styles/[styleId]",
+  "/styles/page": "/styles"
 }

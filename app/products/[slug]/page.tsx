@@ -56,30 +56,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             <p className="text-lg leading-8 text-[#b8ac9a]">{product.description}</p>
             <div className="flex items-center gap-4 text-2xl font-semibold text-white">₦{product.price.toLocaleString()}</div>
 
-            <div className="space-y-6">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Size</p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {product.sizes.map((size) => (
-                    <button key={size} type="button" className="rounded-[14px] border border-white/10 bg-[#0f0d0b] px-4 py-3 text-sm uppercase tracking-[0.24em] text-[#f7f1e8] transition hover:border-gold" style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text)' }}>
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Color</p>
-                <div className="mt-4 flex items-center gap-3">
-                  {product.colors.map((color) => (
-                    <button key={color.name} type="button" className="flex items-center gap-3 rounded-[14px] border border-white/10 bg-[#0f0d0b] px-4 py-3 text-sm text-[#f7f1e8] transition hover:border-gold" style={{ backgroundColor: 'var(--bg-card)', color: 'var(--text)' }}>
-                      <span className="h-4 w-4 rounded-full border border-white/10" style={{ backgroundColor: color.hex }} />
-                      {color.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
             <ProductPurchaseForm product={product} whatsappHref={whatsappHref} />
 
             <div className="space-y-6 rounded-[26px] border border-white/10 bg-[#0d0b09] p-6 text-sm text-[#b8ac9a]" style={{ backgroundColor: 'var(--bg-card)' }}>

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { CartProvider } from '@/lib/cart/CartContext';
+import { CartDrawer } from '@/components/cart/CartDrawer';
 
 export const metadata: Metadata = {
   title: 'Prolific Clothing — Luxury African Menswear',
@@ -43,7 +45,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-[#0b0907] text-[#f7f1e8]" suppressHydrationWarning>
-        {children}
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );
