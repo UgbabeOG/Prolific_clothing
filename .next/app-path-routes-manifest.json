@@ -1,16 +1,20 @@
 {
-  "/api/styles/route": "/api/styles",
   "/_not-found/page": "/_not-found",
+  "/api/styles/route": "/api/styles",
   "/about/page": "/about",
+  "/admin/orders/[id]/page": "/admin/orders/[id]",
+  "/admin/orders/new/page": "/admin/orders/new",
   "/bespoke/page": "/bespoke",
   "/cart/page": "/cart",
   "/checkout/page": "/checkout",
   "/contact/page": "/contact",
   "/page": "/",
+  "/search/page": "/search",
   "/shop/page": "/shop",
   "/studio/page": "/studio",
-  "/admin/styles/page": "/admin/styles",
   "/products/[slug]/page": "/products/[slug]",
+  "/admin/orders/page": "/admin/orders",
+  "/admin/styles/page": "/admin/styles",
   "/styles/[styleId]/page": "/styles/[styleId]",
   "/styles/page": "/styles"
 }

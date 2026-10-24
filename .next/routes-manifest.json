@@ -20,6 +20,14 @@
   },
   "dynamicRoutes": [
     {
+      "page": "/admin/orders/[id]",
+      "regex": "^/admin/orders/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin/orders/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/products/[slug]",
       "regex": "^/products/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -56,6 +64,18 @@
       "namedRegex": "^/about(?:/)?$"
     },
     {
+      "page": "/admin/orders",
+      "regex": "^/admin/orders(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/orders(?:/)?$"
+    },
+    {
+      "page": "/admin/orders/new",
+      "regex": "^/admin/orders/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/orders/new(?:/)?$"
+    },
+    {
       "page": "/admin/styles",
       "regex": "^/admin/styles(?:/)?$",
       "routeKeys": {},
@@ -84,6 +104,12 @@
       "regex": "^/contact(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/search",
+      "regex": "^/search(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/search(?:/)?$"
     },
     {
       "page": "/shop",

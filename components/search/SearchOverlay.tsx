@@ -51,7 +51,7 @@ export function SearchOverlay({ open, onClose }: { open: boolean; onClose: () =>
                 {popularTerms.map((term) => (
                   <Link
                     key={term}
-                    href={`/shop?search=${encodeURIComponent(term)}`}
+                    href={`/search?q=${encodeURIComponent(term)}`}
                     className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[#f4edd7] transition hover:border-gold hover:text-gold"
                   >
                     {term}
