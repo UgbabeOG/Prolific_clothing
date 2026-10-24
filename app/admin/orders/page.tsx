@@ -1,7 +1,13 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getSupabaseConfig } from '@/lib/supabase/config';
-import { loadOrders, ORDER_STATUSES, STATUS_LABELS, STATUS_COLORS, type Order } from '@/lib/orders/order';
+import {
+  loadOrders,
+  ORDER_STATUSES,
+  STATUS_LABELS,
+  STATUS_COLORS,
+  type Order,
+} from '@/lib/orders/order';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ArrowRight } from 'lucide-react';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
@@ -15,9 +21,11 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminOrdersPage() {
+export default async function AdminOrdersPage() {
   const configured = Boolean(getSupabaseConfig());
-  const orders = loadOrders().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const orders = (await loadOrders()).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">

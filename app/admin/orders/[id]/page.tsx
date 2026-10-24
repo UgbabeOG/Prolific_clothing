@@ -2,8 +2,16 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Trash2, Save, CheckCircle2 } from 'lucide-react';
-import { loadOrders, saveOrder, deleteOrder, ORDER_STATUSES, STATUS_LABELS, STATUS_COLORS, type Order } from '@/lib/orders/order';
+import { ArrowLeft, Trash2, Save } from 'lucide-react';
+import {
+  loadOrders,
+  saveOrder,
+  deleteOrder,
+  ORDER_STATUSES,
+  STATUS_LABELS,
+  STATUS_COLORS,
+  type Order,
+} from '@/lib/orders/order';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -21,30 +29,55 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
   const [status, setStatus] = useState<string>('');
 
   useEffect(() => {
-    const orders = loadOrders();
-    const found = orders.find((o) => o.id === id);
-    if (found) {
-      setOrder(found);
-      setStatus(found.status);
-    }
-    setLoading(false);
+    let active = true;
+    const fetchOrder = async () => {
+      try {
+        const orders = await loadOrders();
+        const found = orders.find((o) => o.id === id);
+        if (active) {
+          setOrder(found ?? null);
+          if (found) setStatus(found.status);
+        }
+      } catch (caught) {
+        if (active) setError(caught instanceof Error ? caught.message : 'Could not load order.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void fetchOrder();
+    return () => {
+      active = false;
+    };
   }, [id]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!order) return;
-    const next: Order = { ...order, status: status as Order['status'], updatedAt: new Date().toISOString() };
-    saveOrder(next);
-    setOrder(next);
-    setNotice('Order status updated.');
-    setTimeout(() => setNotice(''), 3000);
+    setError('');
+    setNotice('');
+    try {
+      const next: Order = { ...order, status: status as Order['status'], updatedAt: new Date().toISOString() };
+      await saveOrder(next);
+      setOrder(next);
+      setNotice('Order status updated.');
+      setTimeout(() => setNotice(''), 3000);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not update order.');
+    }
   };
 
-  const handleDelete = () => {
-    if (!window.confirm(`Delete order ${order?.orderNumber}? This cannot be undone.`)) return;
+  const handleDelete = async () => {
     if (!order) return;
-    deleteOrder(order.id);
-    setNotice('Order deleted.');
-    setTimeout(() => setNotice(''), 3000);
+    if (!window.confirm(`Delete order ${order.orderNumber}? This cannot be undone.`)) return;
+    setError('');
+    setNotice('');
+    try {
+      await deleteOrder(order.id);
+      setNotice('Order deleted.');
+      setTimeout(() => setNotice(''), 3000);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not delete order.');
+    }
   };
 
   if (loading) {

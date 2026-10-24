@@ -12,8 +12,8 @@
   "/search/page": "/search",
   "/shop/page": "/shop",
   "/studio/page": "/studio",
-  "/products/[slug]/page": "/products/[slug]",
   "/admin/orders/page": "/admin/orders",
+  "/products/[slug]/page": "/products/[slug]",
   "/admin/styles/page": "/admin/styles",
   "/styles/[styleId]/page": "/styles/[styleId]",
   "/styles/page": "/styles"

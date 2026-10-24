@@ -4,7 +4,15 @@ import { useState, useEffect, type FormEvent } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Plus, Trash2, Save } from 'lucide-react';
 import { products } from '@/data/products';
-import { loadOrders, saveOrder, createOrderNumber, type Order, type OrderItem, ORDER_STATUSES, STATUS_LABELS } from '@/lib/orders/order';
+import {
+  loadOrders,
+  saveOrder,
+  createOrderNumber,
+  type Order,
+  type OrderItem,
+  ORDER_STATUSES,
+  STATUS_LABELS,
+} from '@/lib/orders/order';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -27,9 +35,11 @@ export default function NewOrderPage() {
     status: 'pending' as string,
   });
   const [items, setItems] = useState<NewOrderItem[]>([]);
+  const [orderNumber, setOrderNumber] = useState<string>('');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [loading, setLoading] = useState(false);
+  const [numberLoading, setNumberLoading] = useState(false);
 
   useEffect(() => {
     if (products.length > 0 && items.length === 0) {
@@ -37,6 +47,22 @@ export default function NewOrderPage() {
       setItems([{ product: p, size: p.sizes[0], color: p.colors[0], quantity: 1 }]);
     }
   }, [items.length]);
+
+  useEffect(() => {
+    let active = true;
+    const fetchNumber = async () => {
+      setNumberLoading(true);
+      try {
+        const number = await createOrderNumber();
+        if (active) setOrderNumber(number);
+      } catch (caught) {
+        if (active) setError(caught instanceof Error ? caught.message : 'Could not generate order number.');
+      } finally {
+        if (active) setNumberLoading(false);
+      }
+    };
+    void fetchNumber();
+  }, []);
 
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
 
@@ -71,7 +97,7 @@ export default function NewOrderPage() {
     try {
       const order: Order = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-        orderNumber: createOrderNumber(),
+        orderNumber: orderNumber || (await createOrderNumber()),
         customerName: form.customerName,
         customerEmail: form.customerEmail,
         customerPhone: form.customerPhone,
@@ -83,7 +109,7 @@ export default function NewOrderPage() {
           size: item.size,
           color: item.color,
           quantity: item.quantity,
-        })),
+        })) as OrderItem[],
         subtotal,
         status: form.status as Order['status'],
         notes: form.notes,
@@ -91,7 +117,7 @@ export default function NewOrderPage() {
         updatedAt: new Date().toISOString(),
       };
 
-      saveOrder(order);
+      await saveOrder(order);
       setNotice(`Order ${order.orderNumber} created successfully.`);
       setTimeout(() => {
         window.location.href = `/admin/orders/${order.id}`;
@@ -123,6 +149,11 @@ export default function NewOrderPage() {
 
         {error && <p role="alert" className="mb-6 rounded-lg border border-red-400/30 bg-red-950/30 p-4 text-sm text-red-200">{error}</p>}
         {notice && <p role="status" className="mb-6 rounded-lg border border-emerald-400/30 bg-emerald-950/20 p-4 text-sm text-emerald-200">{notice}</p>}
+
+        <div className="mb-6 flex items-center gap-3">
+          <p className="text-xs uppercase tracking-[0.2em] text-[#d3c7b0]">Order number</p>
+          <span className="font-serif text-lg text-white">{orderNumber || (numberLoading ? 'Generating…' : '—')}</span>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-8 rounded-2xl border border-white/10 bg-[#100f0d] p-6 sm:p-8" style={{ backgroundColor: 'var(--bg-elevated)' }}>
           <div className="grid gap-6 sm:grid-cols-2">
@@ -244,7 +275,7 @@ export default function NewOrderPage() {
             </div>
           </div>
 
-          <button type="submit" disabled={loading} className="w-full rounded-lg bg-[#d3b88b] px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#0b0907] disabled:opacity-50 hover:bg-[#e5d3b2]">
+          <button type="submit" disabled={loading || numberLoading} className="w-full rounded-lg bg-[#d3b88b] px-6 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#0b0907] disabled:opacity-50 hover:bg-[#e5d3b2]">
             <Save size={16} /> {loading ? 'Creating order…' : 'Create order'}
           </button>
         </form>
