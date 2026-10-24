@@ -6,10 +6,12 @@ import { Header } from '@/components/layout/Header';
 import { useCart } from '@/lib/cart/CartContext';
 import { createWhatsAppLink } from '@/lib/whatsapp';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
   const { items, subtotal, itemCount } = useCart();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   if (items.length === 0) {
     return (
@@ -48,7 +50,7 @@ export default function CheckoutPage() {
   const handlePlaceOrder = () => {
     setLoading(true);
     window.open(whatsappHref, '_blank', 'noopener,noreferrer');
-    setLoading(false);
+    router.push('/checkout/success');
   };
 
   return (

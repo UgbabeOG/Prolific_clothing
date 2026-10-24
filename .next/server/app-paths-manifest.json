@@ -12,9 +12,9 @@
   "/search/page": "app/search/page.js",
   "/shop/page": "app/shop/page.js",
   "/studio/page": "app/studio/page.js",
-  "/admin/orders/page": "app/admin/orders/page.js",
-  "/products/[slug]/page": "app/products/[slug]/page.js",
   "/admin/styles/page": "app/admin/styles/page.js",
+  "/products/[slug]/page": "app/products/[slug]/page.js",
+  "/admin/orders/page": "app/admin/orders/page.js",
   "/styles/[styleId]/page": "app/styles/[styleId]/page.js",
   "/styles/page": "app/styles/page.js"
 }
