@@ -40,8 +40,6 @@ export function Footer() {
         <div>
           <p className="text-xs uppercase tracking-[0.28em] text-[#b8a88d]">Customer</p>
           <div className="mt-6 flex flex-col gap-3 text-sm text-[#dcd0c2]">
-            <Link href="#" className="transition hover:text-gold">Shipping</Link>
-            <Link href="#" className="transition hover:text-gold">Returns</Link>
             <Link href="#" className="transition hover:text-gold">Size Guide</Link>
             <Link href="#" className="transition hover:text-gold">FAQs</Link>
           </div>
@@ -52,7 +50,7 @@ export function Footer() {
           <div className="mt-6 flex flex-col gap-3 text-sm text-[#dcd0c2]">
             <Link href="https://wa.me/2348000000000" className="transition hover:text-gold">WhatsApp</Link>
             <Link href="https://www.instagram.com/" className="transition hover:text-gold">Instagram</Link>
-            <Link href="mailto:hello@prolificclothing.ng" className="transition hover:text-gold">Email</Link>
+            <Link href="mailto:Info@prolificclothings.com" className="transition hover:text-gold">Email</Link>
             <span>Abuja, Nigeria</span>
           </div>
         </div>

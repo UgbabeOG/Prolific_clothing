@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { X, Search, ShoppingBag } from 'lucide-react';
 
 const navItems = [
+  { label: 'Home', href: '/' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Collections', href: '/shop?collection=all' },
   { label: 'Bespoke', href: '/bespoke' },
   { label: 'Style Library', href: '/styles' },
   { label: 'About', href: '/about' },
   { label: 'Studio', href: '/studio' },
-  { label: 'Journal', href: '/about#journal' },
+  { label: 'Contact', href: '/contact' },
 ];
 
 export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onClose: () => void; onSearchOpen: () => void }) {

@@ -1,4 +1,4 @@
-// File: /home/gugbabe/projects/Prolific_clothing/app/api/styles/route.ts
+// File: /workspaces/Prolific_clothing/app/api/styles/route.ts
 import * as entry from '../../../../../app/api/styles/route.js'
 import type { NextRequest } from 'next/server.js'
 

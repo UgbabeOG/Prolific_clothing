@@ -20,7 +20,7 @@ export default function ContactPage() {
                 <strong className="text-white">WhatsApp:</strong> <a href="https://wa.me/2348000000000" className="text-gold">+234 800 000 0000</a>
               </p>
               <p>
-                <strong className="text-white">Email:</strong> <a href="mailto:hello@prolificclothing.ng" className="text-gold">hello@prolificclothing.ng</a>
+                <strong className="text-white">Email:</strong> <a href="mailto:Info@prolificclothings.com" className="text-gold">Info@prolificclothings.com</a>
               </p>
               <p>
                 <strong className="text-white">Location:</strong> Abuja, Nigeria
