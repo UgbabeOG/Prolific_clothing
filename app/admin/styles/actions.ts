@@ -143,6 +143,31 @@ export async function createDraftStyle(categoryId: string) {
   return { id: data.id, styleId: formatStyleId(data.style_number) };
 }
 
+export async function createDraftStyles(categoryId: string, count: number) {
+  const supabase = await requireStyleAdmin();
+
+  if (!Number.isInteger(count) || count < 1 || count > 50) {
+    throw new Error('Please enter a valid number of styles (1-50).');
+  }
+
+  const drafts = Array.from({ length: count }, () => ({ category_id: categoryId }));
+
+  const { data, error } = await supabase
+    .from('styles')
+    .insert(drafts)
+    .select('id,style_number')
+    .order('style_number', { ascending: true });
+
+  if (error) {
+    throw new Error(`Could not reserve Style IDs: ${error.message}`);
+  }
+
+  return (data as Array<{ id: string; style_number: number }>).map((draft) => ({
+    id: draft.id,
+    styleId: formatStyleId(draft.style_number),
+  }));
+}
+
 export async function setStyleImage(styleId: string, imagePath: string, imageWidth: number, imageHeight: number) {
   const styleNumber = parseStyleId(styleId);
   if (

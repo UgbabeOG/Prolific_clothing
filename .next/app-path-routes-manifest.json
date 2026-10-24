@@ -2,15 +2,15 @@
   "/_not-found/page": "/_not-found",
   "/api/styles/route": "/api/styles",
   "/about/page": "/about",
-  "/contact/page": "/contact",
   "/bespoke/page": "/bespoke",
   "/cart/page": "/cart",
   "/checkout/page": "/checkout",
+  "/contact/page": "/contact",
+  "/page": "/",
   "/shop/page": "/shop",
   "/studio/page": "/studio",
-  "/page": "/",
-  "/products/[slug]/page": "/products/[slug]",
   "/admin/styles/page": "/admin/styles",
+  "/products/[slug]/page": "/products/[slug]",
   "/styles/[styleId]/page": "/styles/[styleId]",
   "/styles/page": "/styles"
 }

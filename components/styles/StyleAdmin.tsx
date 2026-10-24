@@ -7,6 +7,7 @@ import {
   addStyleCategory,
   archiveStyle,
   createDraftStyle,
+  createDraftStyles,
   deleteStyleCategory,
   loadAdminStyles,
   setCategoryActive,
@@ -63,8 +64,11 @@ export function StyleAdmin() {
   const [password, setPassword] = useState('');
   const [categoryName, setCategoryName] = useState('');
   const [uploadCategory, setUploadCategory] = useState('');
+  const [bulkCategory, setBulkCategory] = useState('');
+  const [bulkFiles, setBulkFiles] = useState<File[]>([]);
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [bulkBusy, setBulkBusy] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
 
@@ -202,6 +206,83 @@ export function StyleAdmin() {
     }
   };
 
+  const submitBulkImage = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!bulkCategory || bulkFiles.length === 0) {
+      setError('Choose a category and at least one image before uploading.');
+      return;
+    }
+
+    setError('');
+    setNotice('');
+    setBulkBusy(true);
+
+    let reserved: Array<{ id: string; styleId: string }> | null = null;
+    try {
+      reserved = await createDraftStyles(bulkCategory, bulkFiles.length);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not reserve Style IDs.');
+      setBulkBusy(false);
+      return;
+    }
+
+    let completed = 0;
+    let failed = 0;
+
+    for (let index = 0; index < bulkFiles.length; index++) {
+      const file = bulkFiles[index];
+      const draft = reserved[index];
+      let uploadedPath: string | null = null;
+
+      try {
+        const compressedImage = await compressImage(file);
+        uploadedPath = `${draft.styleId}/${crypto.randomUUID()}.webp`;
+        const client = createSupabaseBrowserClient();
+        const { error: uploadError } = await client.storage
+          .from(STYLE_STORAGE_BUCKET)
+          .upload(uploadedPath, compressedImage.file, {
+            contentType: 'image/webp',
+            cacheControl: '31536000',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          throw new Error(`Image upload failed for ${draft.styleId}: ${uploadError.message}`);
+        }
+
+        await setStyleImage(draft.styleId, uploadedPath, compressedImage.width, compressedImage.height);
+        completed++;
+      } catch (caught) {
+        failed++;
+        if (uploadedPath) {
+          const client = createSupabaseBrowserClient();
+          await client.storage.from(STYLE_STORAGE_BUCKET).remove([uploadedPath]);
+        }
+        setError((current) =>
+          current
+            ? `${current}\n${draft.styleId}: ${caught instanceof Error ? caught.message : 'Upload failed.'}`
+            : `${draft.styleId}: ${caught instanceof Error ? caught.message : 'Upload failed.'}`,
+        );
+      }
+    }
+
+    setBulkFiles([]);
+    const fileInput = document.getElementById('bulk-style-images') as HTMLInputElement | null;
+    if (fileInput) fileInput.value = '';
+
+    await refreshData();
+
+    if (failed === 0) {
+      setNotice(`Uploaded ${completed} style(s). IDs ${reserved[0].styleId} through ${reserved[reserved.length - 1].styleId} are saved as drafts. Publish them when ready.`);
+    } else if (completed > 0) {
+      setNotice(`Uploaded ${completed} style(s), ${failed} failed. Successful IDs remain as drafts; publish when ready.`);
+    } else {
+      setError(`All ${failed} upload(s) failed. The reserved Style IDs remain unused and will not be reassigned.`);
+    }
+
+    setBulkBusy(false);
+  };
+
   const signOut = async () => {
     setError('');
     setBusy(true);
@@ -299,6 +380,32 @@ export function StyleAdmin() {
           {file && <p className="truncate text-xs text-[#b8ac9a]">Selected: {file.name}</p>}
           <button type="submit" disabled={busy || !file || !uploadCategory} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#d3b88b] px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#0b0907] disabled:opacity-50">
             <Upload size={15} /> {busy ? 'Uploading…' : 'Upload style'}
+          </button>
+        </form>
+
+        <form onSubmit={submitBulkImage} className="space-y-5 rounded-2xl border border-white/10 bg-[#100f0d] p-6 sm:p-8 lg:col-span-2">
+          <div>
+            <h2 className="font-serif text-2xl">Bulk upload styles</h2>
+            <p className="mt-2 text-sm leading-6 text-[#b8ac9a]">Select multiple images for one category. Each image receives the next consecutive Style ID. All images are resized and converted to WebP before upload.</p>
+          </div>
+          <label className="block text-xs uppercase tracking-[0.2em] text-[#d3c7b0]">
+            Category
+            <select required value={bulkCategory} onChange={(event) => setBulkCategory(event.target.value)} className="theme-input mt-2 w-full rounded-lg border px-4 py-3 text-sm normal-case tracking-normal">
+              <option value="">Choose a category</option>
+              {activeCategories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
+            </select>
+          </label>
+          <label className="block text-xs uppercase tracking-[0.2em] text-[#d3c7b0]">
+            Images
+            <input id="bulk-style-images" required type="file" accept="image/*" multiple onChange={(event) => setBulkFiles(Array.from(event.target.files ?? []))} className="mt-2 block w-full text-sm text-[#b8ac9a] file:mr-4 file:rounded-md file:border-0 file:bg-white/10 file:px-4 file:py-2 file:text-xs file:uppercase file:tracking-[0.14em] file:text-white" />
+          </label>
+          {bulkFiles.length > 0 && (
+            <div className="mt-2 flex items-center gap-2 text-xs text-[#b8ac9a]">
+              {bulkFiles.length} {bulkFiles.length === 1 ? 'image' : 'images'} selected &rarr; Style IDs will be assigned consecutively.
+            </div>
+          )}
+          <button type="submit" disabled={bulkBusy || bulkFiles.length === 0 || !bulkCategory} className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#d3b88b] px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#0b0907] disabled:opacity-50">
+            <Upload size={15} /> {bulkBusy ? 'Uploading…' : 'Upload bulk styles'}
           </button>
         </form>
 
