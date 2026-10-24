@@ -1,6 +1,6 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/styles/route": "app/api/styles/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/about/page": "app/about/page.js",
   "/bespoke/page": "app/bespoke/page.js",
   "/cart/page": "app/cart/page.js",

@@ -1,6 +1,6 @@
 {
-  "/_not-found/page": "/_not-found",
   "/api/styles/route": "/api/styles",
+  "/_not-found/page": "/_not-found",
   "/about/page": "/about",
   "/bespoke/page": "/bespoke",
   "/cart/page": "/cart",
