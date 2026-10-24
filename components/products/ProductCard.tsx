@@ -1,11 +1,26 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Product } from '@/lib/types';
-import { Heart, Eye } from 'lucide-react';
+import { Heart, Plus } from 'lucide-react';
 import { productInquiryMessage, createWhatsAppLink } from '@/lib/whatsapp';
+import { useCart } from '@/lib/cart/CartContext';
 
 export function ProductCard({ product }: { product: Product }) {
+  const { addItem, openCart } = useCart();
   const enquiryHref = createWhatsAppLink(productInquiryMessage(product.name));
+
+  const handleAddToBag = () => {
+    addItem({
+      productId: product.id,
+      product,
+      size: product.sizes[0],
+      color: product.colors[0],
+      quantity: 1,
+    });
+    openCart();
+  };
 
   return (
     <div className="group relative overflow-hidden rounded-[26px] border border-white/10 bg-[#100f0d] transition hover:-translate-y-1" style={{ backgroundColor: 'var(--bg-elevated)' }}>
@@ -18,6 +33,14 @@ export function ProductCard({ product }: { product: Product }) {
           className="object-cover transition duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <button
+          type="button"
+          onClick={handleAddToBag}
+          className="absolute right-4 bottom-4 inline-flex items-center justify-center gap-2 rounded-full border border-white/10 bg-[#d3b88b] px-4 py-2 text-xs uppercase tracking-[0.18em] text-[#0b0907] transition hover:bg-[#e5d3b2]"
+          aria-label="Add to bag"
+        >
+          <Plus size={14} /> Add to bag
+        </button>
         <button
           type="button"
           className="absolute right-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white opacity-90 transition hover:border-gold hover:text-gold"

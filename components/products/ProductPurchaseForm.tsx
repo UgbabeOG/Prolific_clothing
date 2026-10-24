@@ -5,11 +5,23 @@ import type { Product } from '@/lib/types';
 import { useCart } from '@/lib/cart/CartContext';
 
 export function ProductPurchaseForm({ product, whatsappHref }: { product: Product; whatsappHref: string }) {
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || '');
   const [selectedColor, setSelectedColor] = useState(product.colors[0]);
 
   const handleAddToBag = () => {
+    if (!selectedSize || !selectedColor) return;
+    addItem({
+      productId: product.id,
+      product,
+      size: selectedSize,
+      color: selectedColor,
+      quantity: 1,
+    });
+    openCart();
+  };
+
+  const handleBuyNow = () => {
     if (!selectedSize || !selectedColor) return;
     addItem({
       productId: product.id,
@@ -76,6 +88,7 @@ export function ProductPurchaseForm({ product, whatsappHref }: { product: Produc
         </button>
         <button
           type="button"
+          onClick={handleBuyNow}
           className="w-full rounded-[18px] border border-white/10 bg-transparent px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-white transition hover:border-gold hover:text-gold"
         >
           Buy Now
