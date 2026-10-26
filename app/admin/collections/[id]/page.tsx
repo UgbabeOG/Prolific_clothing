@@ -9,6 +9,7 @@ import {
   deleteCollection,
   loadCollectionMedia,
   addCollectionMedia,
+  updateCollectionMedia,
   deleteCollectionMedia,
   type CollectionRecord,
   type CollectionMedia,
@@ -22,6 +23,10 @@ type MediaFile = {
   file: File;
   type: 'image' | 'video';
   preview: string;
+  price: string;
+  size: string;
+  colorName: string;
+  colorHex: string;
 };
 
 export default function AdminCollectionEditPage({ params }: { params: Promise<{ id: string }> }) {
@@ -43,6 +48,7 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
 
   const [newMedia, setNewMedia] = useState<MediaFile[]>([]);
   const [selectedMedia, setSelectedMedia] = useState<Set<string>>(new Set());
+  const [editingMedia, setEditingMedia] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let active = true;
@@ -132,9 +138,9 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
     const next: MediaFile[] = [];
     for (const file of files) {
       if (file.type.startsWith('image/')) {
-        next.push({ file, type: 'image', preview: URL.createObjectURL(file) });
+        next.push({ file, type: 'image', preview: URL.createObjectURL(file), price: '', size: '', colorName: '', colorHex: '' });
       } else if (file.type.startsWith('video/')) {
-        next.push({ file, type: 'video', preview: URL.createObjectURL(file) });
+        next.push({ file, type: 'video', preview: URL.createObjectURL(file), price: '', size: '', colorName: '', colorHex: '' });
       }
     }
     setNewMedia((prev) => [...prev, ...next]);
@@ -166,14 +172,20 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
         }),
       );
 
-      for (const u of uploaded) {
-        await addCollectionMedia({
-          collectionId: collection.id,
-          mediaType: u.mediaType,
-          mediaPath: u.mediaPath,
-          sortOrder: u.sortOrder,
-        });
-      }
+      await Promise.all(
+        uploaded.map(async (u, index) => {
+          await addCollectionMedia({
+            collectionId: collection.id,
+            mediaType: u.mediaType,
+            mediaPath: u.mediaPath,
+            sortOrder: u.sortOrder,
+            price: newMedia[index].price ? parseFloat(newMedia[index].price) : null,
+            size: newMedia[index].size || null,
+            colorName: newMedia[index].colorName || null,
+            colorHex: newMedia[index].colorHex || null,
+          });
+        }),
+      );
 
       setNewMedia([]);
       setNotice(`Uploaded ${uploaded.length} file(s) to collection gallery.`);
@@ -236,6 +248,33 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
       setMedia(updatedMedia);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Could not remove media.');
+    }
+  };
+
+  const handleUpdateMedia = async (mediaItem: CollectionMedia, updates: {
+    price?: number | null;
+    size?: string | null;
+    colorName?: string | null;
+    colorHex?: string | null;
+  }) => {
+    setError('');
+    setNotice('');
+    try {
+      await updateCollectionMedia({
+        id: mediaItem.id,
+        ...updates,
+      });
+      setEditingMedia((prev) => {
+        const next = new Set(prev);
+        next.delete(mediaItem.id);
+        return next;
+      });
+      setNotice('Media details updated.');
+      setTimeout(() => setNotice(''), 3000);
+      const updatedMedia = await loadCollectionMedia(collection!.id);
+      setMedia(updatedMedia);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not update media.');
     }
   };
 
@@ -409,6 +448,48 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
                       <p className="text-xs text-[#f7f1e8]">{mf.file.name}</p>
                       <p className="text-[10px] uppercase tracking-[0.12em] text-[#a99d84]">{mf.type}</p>
                     </div>
+                    <div className="flex gap-2">
+                      <input
+                        placeholder="₦ Price"
+                        value={mf.price}
+                        onChange={(e) => {
+                          const next = [...newMedia];
+                          next[index].price = e.target.value;
+                          setNewMedia(next);
+                        }}
+                        className="flex-1 theme-input rounded-lg border px-3 py-2 text-[10px]"
+                      />
+                      <input
+                        placeholder="Size"
+                        value={mf.size}
+                        onChange={(e) => {
+                          const next = [...newMedia];
+                          next[index].size = e.target.value;
+                          setNewMedia(next);
+                        }}
+                        className="flex-1 theme-input rounded-lg border px-3 py-2 text-[10px]"
+                      />
+                      <input
+                        placeholder="Color"
+                        value={mf.colorName}
+                        onChange={(e) => {
+                          const next = [...newMedia];
+                          next[index].colorName = e.target.value;
+                          setNewMedia(next);
+                        }}
+                        className="flex-1 theme-input rounded-lg border px-3 py-2 text-[10px]"
+                      />
+                      <input
+                        type="color"
+                        value={mf.colorHex || '#000000'}
+                        onChange={(e) => {
+                          const next = [...newMedia];
+                          next[index].colorHex = e.target.value;
+                          setNewMedia(next);
+                        }}
+                        className="h-8 rounded-lg border border-white/10 bg-[#0b0907] cursor-pointer"
+                      />
+                    </div>
                     <button type="button" onClick={() => removeNewMedia(index)} className="text-xs text-[#a99d84] hover:text-red-300">Remove</button>
                   </div>
                 ))}
@@ -440,36 +521,128 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
                   </button>
                 </div>
               )}
-              {media.map((m) => (
-                <div key={m.id} className="flex items-center gap-3 border border-white/10 rounded-lg p-3 group">
-                  <div className="flex-shrink-0">
-                    <input
-                      type="checkbox"
-                      checked={selectedMedia.has(m.id)}
-                      onChange={() => toggleMediaSelection(m.id)}
-                      className="rounded border-white/10 text-[#d3b88b] focus:ring-0"
-                    />
+              {media.map((m) => {
+                const isEditing = editingMedia.has(m.id);
+                return (
+                  <div key={m.id} className="flex items-start gap-3 border border-white/10 rounded-lg p-3 group">
+                    <div className="flex-shrink-0 mt-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedMedia.has(m.id)}
+                        onChange={() => toggleMediaSelection(m.id)}
+                        className="rounded border-white/10 text-[#d3b88b] focus:ring-0"
+                      />
+                    </div>
+                    <div className="h-16 w-20 shrink-0 overflow-hidden rounded-md bg-black/20 flex items-center justify-center">
+                      {m.mediaType === 'image' ? (
+                        <ImageIcon size={20} className="text-[#a99d84]" />
+                      ) : (
+                        <Film size={20} className="text-[#a99d84]" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs truncate text-[#f7f1e8]">{m.mediaPath.split('/').pop()}</p>
+                      <p className="text-[10px] uppercase tracking-[0.12em] text-[#a99d84]">{m.mediaType}</p>
+                      {isEditing ? (
+                        <div className="mt-2 flex gap-2">
+                          <input
+                            placeholder="₦ Price"
+                            defaultValue={m.price?.toString() ?? ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              // store temporarily; we'll read on save
+                              (m as any)._pendingPrice = val ? parseFloat(val) : null;
+                            }}
+                            className="flex-1 theme-input rounded-lg border px-3 py-2 text-[10px]"
+                          />
+                          <input
+                            placeholder="Size"
+                            defaultValue={m.size ?? ''}
+                            onChange={(e) => {
+                              (m as any)._pendingSize = e.target.value || null;
+                            }}
+                            className="flex-1 theme-input rounded-lg border px-3 py-2 text-[10px]"
+                          />
+                          <input
+                            placeholder="Color"
+                            defaultValue={m.colorName ?? ''}
+                            onChange={(e) => {
+                              (m as any)._pendingColorName = e.target.value || null;
+                            }}
+                            className="flex-1 theme-input rounded-lg border px-3 py-2 text-[10px]"
+                          />
+                          <input
+                            type="color"
+                            defaultValue={m.colorHex || '#000000'}
+                            onChange={(e) => {
+                              (m as any)._pendingColorHex = e.target.value;
+                            }}
+                            className="h-8 rounded-lg border border-white/10 bg-[#0b0907] cursor-pointer"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleUpdateMedia(m, {
+                                price: (m as any)._pendingPrice ?? null,
+                                size: (m as any)._pendingSize ?? null,
+                                colorName: (m as any)._pendingColorName ?? null,
+                                colorHex: (m as any)._pendingColorHex ?? null,
+                              });
+                            }}
+                            className="rounded-lg bg-[#d3b88b] px-2 py-2 text-[10px] text-[#0b0907] hover:bg-[#e5d3b2]"
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingMedia((prev) => {
+                                const next = new Set(prev);
+                                next.delete(m.id);
+                                return next;
+                              });
+                            }}
+                            className="rounded-lg border border-white/10 px-2 py-2 text-[10px] text-[#a99d84] hover:text-white"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="mt-2 flex items-center gap-2 text-[10px] text-[#a99d84]">
+                          {m.price != null && <span>₦{m.price}</span>}
+                          {m.size && <span>· {m.size}</span>}
+                          {m.colorName && <span>· {m.colorName}</span>}
+                          {!m.price && !m.size && !m.colorName && <span>No pricing set</span>}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      {!isEditing && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingMedia((prev) => {
+                              const next = new Set(prev);
+                              next.add(m.id);
+                              return next;
+                            });
+                          }}
+                          className="text-xs text-[#a99d84] hover:text-white"
+                        >
+                          Edit details
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSingleMedia(m)}
+                        className="text-xs text-[#a99d84] hover:text-red-300"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                  <div className="h-16 w-20 shrink-0 overflow-hidden rounded-md bg-black/20 flex items-center justify-center">
-                    {m.mediaType === 'image' ? (
-                      <ImageIcon size={20} className="text-[#a99d84]" />
-                    ) : (
-                      <Film size={20} className="text-[#a99d84]" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs truncate text-[#f7f1e8]">{m.mediaPath.split('/').pop()}</p>
-                    <p className="text-[10px] uppercase tracking-[0.12em] text-[#a99d84]">{m.mediaType}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveSingleMedia(m)}
-                    className="text-xs text-[#a99d84] hover:text-red-300"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
+                );
+              })}
               {media.length === 0 && (
                 <p className="text-xs text-[#a99d84]">No gallery items yet. Add images and videos above.</p>
               )}

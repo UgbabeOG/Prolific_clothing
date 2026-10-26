@@ -16,13 +16,13 @@
   "/search/page": "/search",
   "/shop/page": "/shop",
   "/studio/page": "/studio",
-  "/admin/styles/page": "/admin/styles",
   "/admin/products/page": "/admin/products",
+  "/admin/styles/page": "/admin/styles",
   "/collections/page": "/collections",
-  "/admin/collections/page": "/admin/collections",
   "/admin/orders/page": "/admin/orders",
-  "/collections/[slug]/page": "/collections/[slug]",
+  "/admin/collections/page": "/admin/collections",
   "/products/[slug]/page": "/products/[slug]",
+  "/collections/[slug]/page": "/collections/[slug]",
   "/styles/[styleId]/page": "/styles/[styleId]",
   "/styles/page": "/styles"
 }

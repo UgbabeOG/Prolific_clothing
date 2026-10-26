@@ -27,6 +27,10 @@ export type PublicCollectionMedia = {
   id: string;
   mediaType: 'image' | 'video';
   mediaUrl: string;
+  price?: number | null;
+  size?: string | null;
+  colorName?: string | null;
+  colorHex?: string | null;
   product?: {
     id: string;
     name: string;
@@ -214,7 +218,7 @@ export async function getPublicCollectionMedia(collectionId: string): Promise<Pu
   const { data, error } = await supabase
     .from('collection_media')
     .select(`
-      id, media_type, media_path, sort_order,
+      id, media_type, media_path, sort_order, price, size, color_name, color_hex,
       product:products(id, name, price, slug, category,
         media:product_media(media_type, media_path, sort_order),
         variants:product_variants(size, color_name, color_hex, is_active)
@@ -263,6 +267,10 @@ export async function getPublicCollectionMedia(collectionId: string): Promise<Pu
       id: row.id,
       mediaType: row.media_type,
       mediaUrl: urlData.signedUrl,
+      price: row.price ?? null,
+      size: row.size ?? null,
+      colorName: row.color_name ?? null,
+      colorHex: row.color_hex ?? null,
       product,
     };
   }));

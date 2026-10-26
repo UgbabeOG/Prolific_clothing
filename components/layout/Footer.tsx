@@ -15,6 +15,13 @@ const footerNav = [
   { label: 'Contact', href: '/contact' },
 ];
 
+const adminNavItems = [
+  { label: 'Products', href: '/admin/products' },
+  { label: 'Collections', href: '/admin/collections' },
+  { label: 'Orders', href: '/admin/orders' },
+  { label: 'Style Library', href: '/admin/styles' },
+];
+
 export function Footer() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checked, setChecked] = useState(false);
@@ -57,11 +64,19 @@ export function Footer() {
         <div>
           <p className="text-xs uppercase tracking-[0.28em] text-[#b8a88d]">Navigation</p>
           <div className="mt-6 flex flex-col gap-3 text-sm text-[#dcd0c2]">
-            {footerNav.slice(0, 6).map((item) => (
-              <Link key={item.href} href={item.href} className="transition hover:text-gold">
-                {item.label}
-              </Link>
-            ))}
+            {isAdmin && checked ? (
+              adminNavItems.map((item) => (
+                <Link key={item.href} href={item.href} className="transition hover:text-gold">
+                  {item.label}
+                </Link>
+              ))
+            ) : (
+              footerNav.slice(0, 6).map((item) => (
+                <Link key={item.href} href={item.href} className="transition hover:text-gold">
+                  {item.label}
+                </Link>
+              ))
+            )}
           </div>
         </div>
 

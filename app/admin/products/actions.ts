@@ -419,13 +419,18 @@ export type CollectionMedia = {
   mediaType: 'image' | 'video';
   mediaPath: string;
   sortOrder: number;
+  price?: number | null;
+  size?: string | null;
+  colorName?: string | null;
+  colorHex?: string | null;
+  productId?: string | null;
 };
 
 export async function loadCollectionMedia(collectionId: string): Promise<CollectionMedia[]> {
   const supabase = await requireStyleAdmin();
   const { data, error } = await supabase
     .from('collection_media')
-    .select('id, media_type, media_path, sort_order')
+    .select('id, media_type, media_path, sort_order, price, size, color_name, color_hex, product_id')
     .eq('collection_id', collectionId)
     .order('sort_order', { ascending: true });
 
@@ -438,6 +443,11 @@ export async function loadCollectionMedia(collectionId: string): Promise<Collect
     mediaType: row.media_type,
     mediaPath: row.media_path,
     sortOrder: row.sort_order,
+    price: row.price ?? null,
+    size: row.size ?? null,
+    colorName: row.color_name ?? null,
+    colorHex: row.color_hex ?? null,
+    productId: row.product_id ?? null,
   }));
 }
 
@@ -446,6 +456,11 @@ export async function addCollectionMedia(input: {
   mediaType: 'image' | 'video';
   mediaPath: string;
   sortOrder?: number;
+  price?: number | null;
+  size?: string | null;
+  colorName?: string | null;
+  colorHex?: string | null;
+  productId?: string | null;
 }) {
   const supabase = await requireStyleAdmin();
 
@@ -456,6 +471,11 @@ export async function addCollectionMedia(input: {
       media_type: input.mediaType,
       media_path: input.mediaPath,
       sort_order: input.sortOrder ?? 0,
+      price: input.price ?? null,
+      size: input.size ?? null,
+      color_name: input.colorName ?? null,
+      color_hex: input.colorHex ?? null,
+      product_id: input.productId ?? null,
     })
     .select('id')
     .single();
@@ -491,6 +511,35 @@ export async function deleteCollectionMedia(id: string) {
     if (storageError) {
       return `Media deleted, but file could not be removed from storage: ${storageError.message}`;
     }
+  }
+
+  return null;
+}
+
+export async function updateCollectionMedia(input: {
+  id: string;
+  price?: number | null;
+  size?: string | null;
+  colorName?: string | null;
+  colorHex?: string | null;
+  productId?: string | null;
+}) {
+  const supabase = await requireStyleAdmin();
+
+  const updates: Record<string, any> = {};
+  if (input.price !== undefined) updates.price = input.price;
+  if (input.size !== undefined) updates.size = input.size;
+  if (input.colorName !== undefined) updates.color_name = input.colorName;
+  if (input.colorHex !== undefined) updates.color_hex = input.colorHex;
+  if (input.productId !== undefined) updates.product_id = input.productId;
+
+  const { error } = await supabase
+    .from('collection_media')
+    .update(updates)
+    .eq('id', input.id);
+
+  if (error) {
+    throw new Error(`Could not update media: ${error.message}`);
   }
 
   return null;
