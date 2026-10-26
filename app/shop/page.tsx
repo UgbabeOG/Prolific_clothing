@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { ProductCard } from '@/components/products/ProductCard';
-import { products } from '@/data/products';
+import { getPublicProducts, getPublicCollections, type PublicProduct } from '@/lib/products.server';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -18,36 +18,38 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
   const collection = resolvedSearchParams?.collection?.trim().toLowerCase() ?? '';
   const sort = resolvedSearchParams?.sort;
 
-  const filteredProducts = products
-    .filter((product) => {
-      if (collection && collection !== 'all') {
-        const categoryLower = product.category.toLowerCase();
-        const collectionNormalized = collection.replace(/-/g, ' ');
-        // Also handle direct matches and common variations
-        const matches =
-          categoryLower === collection ||
-          categoryLower === collectionNormalized ||
-          categoryLower.replace(/-/g, ' ') === collectionNormalized ||
-          (collection === 'native-wear' && categoryLower.includes('native')) ||
-          (collection === 'shirts' && categoryLower.includes('shirt')) ||
-          (collection === 'trousers' && categoryLower.includes('trouser')) ||
-          (collection === 't-shirts' && categoryLower.includes('t-shirt')) ||
-          (collection === 'ready-to-wear' && (categoryLower.includes('ready') || categoryLower.includes('shirt') || categoryLower.includes('trouser')));
-        if (!matches) {
-          return false;
-        }
+  const [products, collections] = await Promise.all([
+    getPublicProducts(),
+    getPublicCollections(),
+  ]);
+
+  const filteredProducts = products.filter((product: PublicProduct) => {
+    if (collection && collection !== 'all') {
+      const categoryLower = product.category.toLowerCase();
+      const collectionNormalized = collection.replace(/-/g, ' ');
+      const matches =
+        categoryLower === collection ||
+        categoryLower === collectionNormalized ||
+        categoryLower.replace(/-/g, ' ') === collectionNormalized ||
+        (collection === 'native-wear' && categoryLower.includes('native')) ||
+        (collection === 'shirts' && categoryLower.includes('shirt')) ||
+        (collection === 'trousers' && categoryLower.includes('trouser')) ||
+        (collection === 't-shirts' && categoryLower.includes('t-shirt')) ||
+        (collection === 'ready-to-wear' && (categoryLower.includes('ready') || categoryLower.includes('shirt') || categoryLower.includes('trouser')));
+      if (!matches) {
+        return false;
       }
-      if (!searchTerm) {
-        return true;
-      }
-      const productText = `${product.name} ${product.category} ${product.description} ${product.shortDescription}`.toLowerCase();
-      return productText.includes(searchTerm);
-    })
-    .sort((a, b) => {
-      if (sort === 'price-asc') return a.price - b.price;
-      if (sort === 'price-desc') return b.price - a.price;
-      return 0;
-    });
+    }
+    if (!searchTerm) {
+      return true;
+    }
+    const productText = `${product.name} ${product.category} ${product.description} ${product.shortDescription}`.toLowerCase();
+    return productText.includes(searchTerm);
+  }).sort((a: PublicProduct, b: PublicProduct) => {
+    if (sort === 'price-asc') return a.price - b.price;
+    if (sort === 'price-desc') return b.price - a.price;
+    return 0;
+  });
 
   const statusLabel = searchTerm
     ? `Search results for “${searchTerm}”`
@@ -76,11 +78,10 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Category</p>
               <ul className="mt-6 space-y-4">
-                <li><Link href="/shop?collection=native-wear" className="transition hover:text-gold">Native Wear</Link></li>
-                <li><Link href="/shop?collection=shirts" className="transition hover:text-gold">Shirts</Link></li>
-                <li><Link href="/shop?collection=trousers" className="transition hover:text-gold">Trousers</Link></li>
-                <li><Link href="/shop?collection=t-shirts" className="transition hover:text-gold">T-Shirts</Link></li>
-                <li><Link href="/shop?collection=ready-to-wear" className="transition hover:text-gold">Ready-to-Wear</Link></li>
+                <li><Link href="/shop?collection=all" className={`transition ${collection === 'all' || !collection ? 'text-gold' : 'hover:text-gold'}`}>All Collections</Link></li>
+                {collections.map((c) => (
+                  <li key={c.slug}><Link href={`/shop?collection=${c.slug}`} className={`transition ${collection === c.slug ? 'text-gold' : 'hover:text-gold'}`}>{c.name}</Link></li>
+                ))}
                 <li><Link href="/bespoke" className="transition hover:text-gold">Bespoke</Link></li>
               </ul>
             </div>
@@ -97,10 +98,10 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Sort</p>
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/shop?sort=price-asc" className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[#f4edd7] transition hover:border-gold hover:text-gold">
+                <Link href={`/shop?search=${searchTerm || ''}&collection=${collection || ''}&sort=price-asc`} className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[#f4edd7] transition hover:border-gold hover:text-gold">
                   Price: Low to High
                 </Link>
-                <Link href="/shop?sort=price-desc" className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[#f4edd7] transition hover:border-gold hover:text-gold">
+                <Link href={`/shop?search=${searchTerm || ''}&collection=${collection || ''}&sort=price-desc`} className="rounded-full border border-white/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[#f4edd7] transition hover:border-gold hover:text-gold">
                   Price: High to Low
                 </Link>
               </div>
@@ -116,7 +117,7 @@ export default async function ShopPage({ searchParams }: { searchParams?: Promis
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
                 {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product.id} product={product as never} />
                 ))}
               </div>
             )}

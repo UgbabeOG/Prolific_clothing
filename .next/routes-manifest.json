@@ -20,12 +20,28 @@
   },
   "dynamicRoutes": [
     {
+      "page": "/admin/collections/[id]",
+      "regex": "^/admin/collections/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin/collections/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/admin/orders/[id]",
       "regex": "^/admin/orders/([^/]+?)(?:/)?$",
       "routeKeys": {
         "nxtPid": "nxtPid"
       },
       "namedRegex": "^/admin/orders/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/admin/products/[id]",
+      "regex": "^/admin/products/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/admin/products/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
       "page": "/products/[slug]",
@@ -64,6 +80,18 @@
       "namedRegex": "^/about(?:/)?$"
     },
     {
+      "page": "/admin/collections",
+      "regex": "^/admin/collections(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/collections(?:/)?$"
+    },
+    {
+      "page": "/admin/collections/new",
+      "regex": "^/admin/collections/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/collections/new(?:/)?$"
+    },
+    {
       "page": "/admin/orders",
       "regex": "^/admin/orders(?:/)?$",
       "routeKeys": {},
@@ -74,6 +102,18 @@
       "regex": "^/admin/orders/new(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/admin/orders/new(?:/)?$"
+    },
+    {
+      "page": "/admin/products",
+      "regex": "^/admin/products(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/products(?:/)?$"
+    },
+    {
+      "page": "/admin/products/new",
+      "regex": "^/admin/products/new(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/products/new(?:/)?$"
     },
     {
       "page": "/admin/styles",

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { X, Search, ShoppingBag } from 'lucide-react';
+import { X, Search, ShoppingBag, Settings } from 'lucide-react';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -13,7 +13,14 @@ const navItems = [
   { label: 'Contact', href: '/contact' },
 ];
 
-export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onClose: () => void; onSearchOpen: () => void }) {
+const adminNavItems = [
+  { label: 'Style Library', href: '/admin/styles' },
+  { label: 'Orders', href: '/admin/orders' },
+  { label: 'Products', href: '/admin/products' },
+  { label: 'Collections', href: '/admin/collections' },
+];
+
+export function MobileMenu({ open, onClose, onSearchOpen, isAdmin, adminChecked }: { open: boolean; onClose: () => void; onSearchOpen: () => void; isAdmin: boolean; adminChecked: boolean }) {
   return (
     <div className={`fixed inset-0 z-40 transition-opacity ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
@@ -36,6 +43,11 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
               {item.label}
             </Link>
           ))}
+          {isAdmin && adminNavItems.map((item) => (
+            <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-[#d3b88b]">
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
         <div className="mt-12 flex items-center gap-4 border-t border-white/10 pt-8">
@@ -49,6 +61,14 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
           >
             <Search size={16} /> Search
           </button>
+          {isAdmin && (
+            <Link
+              href="/admin/styles"
+              className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#d3b88b] transition hover:text-white"
+            >
+              <Settings size={16} /> Admin
+            </Link>
+          )}
           <button type="button" className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#f7f1e8] transition hover:text-gold">
             <ShoppingBag size={16} /> Bag
           </button>

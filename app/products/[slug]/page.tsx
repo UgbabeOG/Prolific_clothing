@@ -2,32 +2,39 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { products } from '@/data/products';
+import { getPublicProduct } from '@/lib/products.server';
 import { createWhatsAppLink, productInquiryMessage } from '@/lib/whatsapp';
 import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ProductPurchaseForm } from '@/components/products/ProductPurchaseForm';
 
-export function generateStaticParams() {
-  return products.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
+  // Static params are not used since products are fetched from Supabase at build/runtime.
+  // Return empty array to avoid build-time data fetching; individual slugs resolved via generateMetadata + page.
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
+  let product;
+  try {
+    product = await getPublicProduct(slug);
+  } catch {
+    product = null;
+  }
   if (!product) {
     return { title: 'Product not found' };
   }
   return {
     title: `${product.name} — Prolific Clothing`,
-    description: product.description,
+    description: product.shortDescription,
   };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = products.find((item) => item.slug === slug);
+  const product = await getPublicProduct(slug);
   if (!product) {
     notFound();
   }
@@ -42,12 +49,24 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr]">
           <div className="space-y-8">
             <div className="grid gap-6 sm:grid-cols-2">
-              {product.images.slice(0, 2).map((src) => (
-                <div key={src} className="relative h-[420px] overflow-hidden rounded-[28px] border border-white/10 bg-[#100f0d]">
+              {product.images.slice(0, 2).map((src, i) => (
+                <div key={i} className="relative h-[420px] overflow-hidden rounded-[28px] border border-white/10 bg-[#100f0d]">
                   <Image src={src} alt={product.name} fill className="object-cover" />
                 </div>
               ))}
             </div>
+            {product.videos.length > 0 && (
+              <div className="relative h-[420px] overflow-hidden rounded-[28px] border border-white/10 bg-[#100f0d]">
+                <video
+                  src={product.videos[0]}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
           </div>
 
           <aside className="space-y-8 rounded-[32px] border border-white/10 bg-[#100f0d] p-10" style={{ backgroundColor: 'var(--bg-elevated)' }}>
@@ -90,18 +109,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </Link>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {products.slice(0, 4).map((item) => (
-              <Link key={item.id} href={`/products/${item.slug}`} className="rounded-[24px] border border-white/10 bg-[#0d0b09] p-5 transition hover:border-gold" style={{ backgroundColor: 'var(--bg-card)' }}>
-                <div className="relative h-56 overflow-hidden rounded-[20px] bg-[#11100d]">
-                  <Image src={item.images[0]} alt={item.name} fill className="object-cover" />
-                </div>
-                <div className="mt-5 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.24em] text-[#b8ac9a]">{item.category}</p>
-                  <h3 className="text-xl font-serif leading-tight text-white">{item.name}</h3>
-                  <p className="text-sm text-[#aea28c]">₦{item.price.toLocaleString()}</p>
-                </div>
-              </Link>
-            ))}
+            {/* Related products will be populated from Supabase in a future update; placeholder shows empty state */}
+            <div className="col-span-full rounded-[28px] border border-white/10 bg-[#100f0d] p-12 text-center text-[#b8ac9a]" style={{ backgroundColor: 'var(--bg-elevated)' }}>
+              <p className="text-lg text-white">Browse all products in the shop.</p>
+            </div>
           </div>
         </section>
       </main>

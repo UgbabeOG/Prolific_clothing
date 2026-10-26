@@ -5,6 +5,7 @@ import { Hero } from '@/components/hero/Hero';
 import { SectionHeading } from '@/components/ui/SectionHeading';
 import { CollectionCard } from '@/components/collections/CollectionCard';
 import { ProductCard } from '@/components/products/ProductCard';
+import Image from 'next/image';
 import { collections } from '@/data/collections';
 import { products } from '@/data/products';
 import { createWhatsAppLink, generalInquiryMessage } from '@/lib/whatsapp';
@@ -84,7 +85,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="relative h-[520px] overflow-hidden rounded-[30px] border border-white/10 bg-[#14110f]">
-              <img src="/assets/tag_photo.png" alt="Detail craftsmanship imagery" className="h-full w-full object-cover" />
+              <Image src="/assets/tag_photo.png" alt="Detail craftsmanship imagery" fill className="object-cover" sizes="(max-width: 768px) 100vw, 520px" />
             </div>
           </div>
         </section>
@@ -100,10 +101,10 @@ export default function HomePage() {
             </div>
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="relative h-96 overflow-hidden rounded-[26px] border border-white/10 bg-[#11100d]">
-                <img src="/assets/product_lookbook_board.png" alt="Lookbook board imagery" className="h-full w-full object-cover" />
+                <Image src="/assets/product_lookbook_board.png" alt="Lookbook board imagery" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
               </div>
               <div className="relative h-96 overflow-hidden rounded-[26px] border border-white/10 bg-[#11100d]">
-                <img src="/assets/tshirt_lookbook.png" alt="T-shirt lookbook imagery" className="h-full w-full object-cover" />
+                <Image src="/assets/tshirt_lookbook.png" alt="T-shirt lookbook imagery" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
               </div>
             </div>
           </div>

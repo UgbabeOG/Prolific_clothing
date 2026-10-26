@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, Search, Heart, User, ShoppingBag } from 'lucide-react';
+import { Menu, Search, Heart, User, ShoppingBag, Settings } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { MobileMenu } from './MobileMenu';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useCart } from '@/lib/cart/CartContext';
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -19,11 +20,20 @@ const navItems = [
   { label: 'Contact', href: '/contact' },
 ];
 
+const adminNavItems = [
+  { label: 'Style Library', href: '/admin/styles' },
+  { label: 'Orders', href: '/admin/orders' },
+  { label: 'Products', href: '/admin/products' },
+  { label: 'Collections', href: '/admin/collections' },
+];
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isLightTheme, setIsLightTheme] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(false);
   const { toggleCart, itemCount } = useCart();
 
   useEffect(() => {
@@ -38,6 +48,27 @@ export function Header() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       document.documentElement.removeEventListener('themechange', syncTheme as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const checkAdmin = async () => {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (active && user?.app_metadata?.role === 'style_admin') {
+          setIsAdmin(true);
+        }
+      } catch {
+        // Supabase not configured or auth error; admin links stay hidden
+      } finally {
+        if (active) setAdminChecked(true);
+      }
+    };
+    void checkAdmin();
+    return () => {
+      active = false;
     };
   }, []);
 
@@ -86,6 +117,16 @@ export function Header() {
               <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
+          {isAdmin && adminNavItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="relative text-sm uppercase tracking-[0.26em] text-[#d3b88b] transition hover:text-white"
+            >
+              {item.label}
+              <span className="mt-2 block h-[1px] w-0 bg-[#d3b88b] transition-all duration-300 group-hover:w-full" />
+            </Link>
+          ))}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -98,6 +139,16 @@ export function Header() {
           >
             <Search size={18} />
           </button>
+          {isAdmin && (
+            <Link
+              href="/admin/styles"
+              className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
+              aria-label="Admin"
+              data-tooltip="Admin"
+            >
+              <Settings size={18} />
+            </Link>
+          )}
           <button
             type="button"
             className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
@@ -132,8 +183,9 @@ export function Header() {
         </div>
       </div>
 
-      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} onSearchOpen={() => setSearchOpen(true)} />
+      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} onSearchOpen={() => setSearchOpen(true)} isAdmin={isAdmin} adminChecked={adminChecked} />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
+

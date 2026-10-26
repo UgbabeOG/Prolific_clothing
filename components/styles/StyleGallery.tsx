@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight, Heart, RotateCw } from 'lucide-react';
 import { STYLE_PAGE_SIZE, type PublicStyle, type StyleCategory } from '@/lib/styles';
 import { useSavedStyles } from './SavedStylesProvider';
@@ -25,15 +25,17 @@ export function StyleGallery({
   configured: boolean;
 }) {
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [styles, setStyles] = useState(initialStyles.slice(0, STYLE_PAGE_SIZE));
-  const [cursor, setCursor] = useState(initialStyles.slice(0, STYLE_PAGE_SIZE).at(-1)?.styleId ?? null);
-  const [hasMore, setHasMore] = useState(initialStyles.length > STYLE_PAGE_SIZE);
+  const [styles, setStyles] = useState<PublicStyle[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const requestNumber = useRef(0);
+  const observerRef = useRef<HTMLDivElement>(null);
+  const observer = useRef<IntersectionObserver | null>(null);
   const { styleIds, storageError } = useSavedStyles();
 
-  const loadPage = async (category: string, before: string | null, append: boolean) => {
+  const loadPage = useCallback(async (category: string, before: string | null, append: boolean) => {
     const currentRequest = ++requestNumber.current;
     setLoading(true);
     setError('');
@@ -47,7 +49,7 @@ export function StyleGallery({
       if (currentRequest !== requestNumber.current) return;
 
       const nextStyles = result.styles ?? [];
-      setStyles((current) => append ? [...current, ...nextStyles] : nextStyles);
+      setStyles((current) => (append ? [...current, ...nextStyles] : nextStyles));
       setCursor(result.nextCursor ?? null);
       setHasMore(Boolean(result.hasMore));
     } catch (caught) {
@@ -57,15 +59,42 @@ export function StyleGallery({
     } finally {
       if (currentRequest === requestNumber.current) setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const setStylesFromInitial = () => {
+      setStyles(initialStyles.slice(0, STYLE_PAGE_SIZE));
+      setCursor(initialStyles.slice(0, STYLE_PAGE_SIZE).at(-1)?.styleId ?? null);
+      setHasMore(initialStyles.length > STYLE_PAGE_SIZE);
+    };
+    setStylesFromInitial();
+  }, [initialStyles]);
 
   const selectCategory = (slug: string) => {
     setSelectedCategory(slug);
     setStyles([]);
     setCursor(null);
-    setHasMore(false);
+    setHasMore(true);
     void loadPage(slug, null, false);
   };
+
+  useEffect(() => {
+    const node = observerRef.current;
+    if (!node) return;
+    observer.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loading && !error) {
+          void loadPage(selectedCategory, cursor, true);
+        }
+      },
+      { threshold: 0.1, rootMargin: '200px' },
+    );
+    observer.current.observe(node);
+    return () => {
+      observer.current?.disconnect();
+      observer.current = null;
+    };
+  }, [hasMore, loading, error, selectedCategory, cursor, loadPage]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-28 pt-10 sm:px-8 sm:pt-14">
@@ -156,13 +185,7 @@ export function StyleGallery({
             ))}
           </div>
           {loading && <p className="py-8 text-center text-xs uppercase tracking-[0.2em] text-[#a99d84]">Loading styles…</p>}
-          {hasMore && !loading && !error && (
-            <div className="flex justify-center pt-5">
-              <button type="button" onClick={() => void loadPage(selectedCategory, cursor, true)} className="inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-[10px] uppercase tracking-[0.2em] text-[#d3c7b0] transition hover:border-[#d3b88b] hover:text-white">
-                Load more <ArrowRight size={13} />
-              </button>
-            </div>
-          )}
+          <div ref={observerRef} className="h-8" />
         </section>
       )}
     </div>
