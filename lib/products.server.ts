@@ -23,6 +23,12 @@ export type PublicCollection = {
   image: string;
 };
 
+export type PublicCollectionMedia = {
+  id: string;
+  mediaType: 'image' | 'video';
+  mediaUrl: string;
+};
+
 const productSelection = `
   id, slug, name, category, price, description, short_description,
   is_published, is_featured,
@@ -191,4 +197,29 @@ export async function getPublicCollection(slug: string): Promise<PublicCollectio
     description: data.description ?? '',
     image,
   };
+}
+
+export async function getPublicCollectionMedia(collectionId: string): Promise<PublicCollectionMedia[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from('collection_media')
+    .select('id, media_type, media_path, sort_order')
+    .eq('collection_id', collectionId)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    throw new Error(`Could not load collection media: ${error.message}`);
+  }
+
+  const media = await Promise.all((data as any[]).map(async (row) => {
+    const { data: urlData, error: urlError } = await supabase.storage.from('product-media').createSignedUrl(row.media_path, 60 * 60);
+    if (urlError) return null;
+    return {
+      id: row.id,
+      mediaType: row.media_type,
+      mediaUrl: urlData.signedUrl,
+    };
+  }));
+
+  return media.filter((m): m is PublicCollectionMedia => m !== null);
 }

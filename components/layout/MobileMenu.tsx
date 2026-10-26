@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { X, Search, ShoppingBag, Settings } from 'lucide-react';
+import { X, Search, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 
 const navItems = [
   { label: 'Home', href: '/' },
@@ -14,13 +16,37 @@ const navItems = [
 ];
 
 const adminNavItems = [
-  { label: 'Style Library', href: '/admin/styles' },
-  { label: 'Orders', href: '/admin/orders' },
   { label: 'Products', href: '/admin/products' },
   { label: 'Collections', href: '/admin/collections' },
+  { label: 'Orders', href: '/admin/orders' },
+  { label: 'Style Library', href: '/admin/styles' },
 ];
 
-export function MobileMenu({ open, onClose, onSearchOpen, isAdmin, adminChecked }: { open: boolean; onClose: () => void; onSearchOpen: () => void; isAdmin: boolean; adminChecked: boolean }) {
+export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onClose: () => void; onSearchOpen: () => void }) {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const checkAdmin = async () => {
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (active && user?.app_metadata?.role === 'style_admin') {
+          setIsAdmin(true);
+        }
+      } catch {
+        // Supabase not configured or auth error
+      } finally {
+        if (active) setChecked(true);
+      }
+    };
+    void checkAdmin();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   return (
     <div className={`fixed inset-0 z-40 transition-opacity ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
@@ -43,11 +69,16 @@ export function MobileMenu({ open, onClose, onSearchOpen, isAdmin, adminChecked 
               {item.label}
             </Link>
           ))}
-          {isAdmin && adminNavItems.map((item) => (
-            <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-[#d3b88b]">
-              {item.label}
-            </Link>
-          ))}
+          {isAdmin && checked && (
+            <>
+              <div className="mt-8 mb-2 text-xs uppercase tracking-[0.28em] text-[#b8a88d]">Admin</div>
+              {adminNavItems.map((item) => (
+                <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-gold">
+                  {item.label}
+                </Link>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="mt-12 flex items-center gap-4 border-t border-white/10 pt-8">
@@ -61,14 +92,6 @@ export function MobileMenu({ open, onClose, onSearchOpen, isAdmin, adminChecked 
           >
             <Search size={16} /> Search
           </button>
-          {isAdmin && (
-            <Link
-              href="/admin/styles"
-              className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#d3b88b] transition hover:text-white"
-            >
-              <Settings size={16} /> Admin
-            </Link>
-          )}
           <button type="button" className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#f7f1e8] transition hover:text-gold">
             <ShoppingBag size={16} /> Bag
           </button>

@@ -34,23 +34,15 @@ export default function AdminCollectionEditPage({ params }: { params: Promise<{ 
   const [saving, setSaving] = useState(false);
   const [uploadingMedia, setUploadingMedia] = useState(false);
 
-  // Form fields (for collection details)
-type CollectionForm = {
-  slug: string;
-  name: string;
-  description: string;
-  isPublished: boolean;
-};
+  const [form, setForm] = useState({
+    slug: '',
+    name: '',
+    description: '',
+    isPublished: false,
+  });
 
-const [form, setForm] = useState<CollectionForm>({
-  slug: '',
-  name: '',
-  description: '',
-  isPublished: false,
-});
-
-  // New media to upload
   const [newMedia, setNewMedia] = useState<MediaFile[]>([]);
+  const [selectedMedia, setSelectedMedia] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let active = true;
@@ -86,11 +78,11 @@ const [form, setForm] = useState<CollectionForm>({
     };
   }, [params]);
 
-  const handleFormChange = (field: keyof CollectionForm, value: string | boolean) => {
+  const handleFormChange = (field: keyof typeof form, value: string | boolean) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleToggle = (field: keyof CollectionForm) => {
+  const handleToggle = (field: keyof typeof form) => {
     setForm((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
@@ -127,6 +119,9 @@ const [form, setForm] = useState<CollectionForm>({
       const warning = await deleteCollection(collection.id);
       if (warning) setError(warning);
       else setNotice('Collection deleted.');
+      setTimeout(() => {
+        window.location.href = '/admin/collections';
+      }, 500);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'Could not delete collection.');
     }
@@ -184,7 +179,6 @@ const [form, setForm] = useState<CollectionForm>({
       setNotice(`Uploaded ${uploaded.length} file(s) to collection gallery.`);
       setTimeout(() => setNotice(''), 3000);
 
-      // Refresh media list
       const updatedMedia = await loadCollectionMedia(collection.id);
       setMedia(updatedMedia);
     } catch (caught) {
@@ -194,7 +188,44 @@ const [form, setForm] = useState<CollectionForm>({
     }
   };
 
-  const handleRemoveMedia = async (mediaItem: CollectionMedia) => {
+  const toggleMediaSelection = (mediaId: string) => {
+    setSelectedMedia((prev) => {
+      const next = new Set(prev);
+      if (next.has(mediaId)) next.delete(mediaId);
+      else next.add(mediaId);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedMedia.size === media.length) {
+      setSelectedMedia(new Set());
+    } else {
+      setSelectedMedia(new Set(media.map((m) => m.id)));
+    }
+  };
+
+  const handleDeleteSelectedMedia = async () => {
+    if (selectedMedia.size === 0) return;
+    if (!window.confirm(`Delete ${selectedMedia.size} selected media item(s)? This cannot be undone.`)) return;
+    setError('');
+    setNotice('');
+
+    try {
+      const mediaItems = media.filter((m) => selectedMedia.has(m.id));
+      await Promise.all(mediaItems.map((m) => deleteCollectionMedia(m.id)));
+      setSelectedMedia(new Set());
+      setNotice(`Deleted ${mediaItems.length} media item(s).`);
+      setTimeout(() => setNotice(''), 3000);
+
+      const updatedMedia = await loadCollectionMedia(collection!.id);
+      setMedia(updatedMedia);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : 'Could not delete media.');
+    }
+  };
+
+  const handleRemoveSingleMedia = async (mediaItem: CollectionMedia) => {
     setError('');
     setNotice('');
     try {
@@ -242,7 +273,6 @@ const [form, setForm] = useState<CollectionForm>({
     );
   }
 
-  // Determine cover image path: first image in collection_media, or collections.image_path
   const coverImage = media.find((m) => m.mediaType === 'image')?.mediaPath ?? collection.imagePath;
 
   return (
@@ -286,7 +316,6 @@ const [form, setForm] = useState<CollectionForm>({
         {notice && <p role="status" className="mb-6 rounded-lg border border-emerald-400/30 bg-emerald-950/20 p-4 text-sm text-emerald-200">{notice}</p>}
 
         <section className="grid gap-8 lg:grid-cols-[1fr_0.5fr]">
-          {/* Collection details */}
           <section className="space-y-6 rounded-2xl border border-white/10 bg-[#100f0d] p-6 sm:p-8" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Collection details</p>
@@ -315,11 +344,10 @@ const [form, setForm] = useState<CollectionForm>({
             </form>
           </section>
 
-          {/* Cover image (current) */}
           <section className="space-y-6 rounded-2xl border border-white/10 bg-[#100f0d] p-6 sm:p-8" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <div>
               <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Cover image</p>
-              <p className="mt-2 text-xs text-[#a99d84]">The cover is the first image in the gallery. Changing it here only affects the collections table cover reference.</p>
+              <p className="mt-2 text-xs text-[#a99d84]">The cover is the first image in the gallery. It represents this collection publicly.</p>
             </div>
             <div className="flex items-center gap-4">
               {coverImage ? (
@@ -335,13 +363,24 @@ const [form, setForm] = useState<CollectionForm>({
             </div>
           </section>
 
-          {/* Gallery media */}
           <section className="lg:col-span-2 space-y-6 rounded-2xl border border-white/10 bg-[#100f0d] p-6 sm:p-8" style={{ backgroundColor: 'var(--bg-elevated)' }}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-[#d3b88b]">Collection gallery</p>
-                <p className="mt-1 text-xs text-[#a99d84]">Add more images and videos below. The cover image above stays unchanged.</p>
+                <p className="mt-1 text-xs text-[#a99d84]">Add more images and videos below. The cover image stays unchanged.</p>
               </div>
+              {selectedMedia.size > 0 && (
+                <div className="flex items-center gap-2 rounded-lg border border-red-400/30 bg-red-950/20 px-3 py-2">
+                  <span className="text-xs text-red-200">{selectedMedia.size} selected</span>
+                  <button
+                    type="button"
+                    onClick={handleDeleteSelectedMedia}
+                    className="ml-2 text-xs text-red-300 hover:text-white"
+                  >
+                    Delete selected
+                  </button>
+                </div>
+              )}
               <div className="flex gap-2">
                 <input
                   id="media-upload"
@@ -385,8 +424,32 @@ const [form, setForm] = useState<CollectionForm>({
             )}
 
             <div className="space-y-3 mt-4">
+              {media.length > 0 && (
+                <div className="flex items-center justify-between mb-2">
+                  <button
+                    type="button"
+                    onClick={toggleSelectAll}
+                    className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.14em] text-[#d3c7b0] hover:text-gold"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedMedia.size === media.length && media.length > 0}
+                      className="rounded border-white/10 text-[#d3b88b] focus:ring-0"
+                    />
+                    {selectedMedia.size === media.length && media.length > 0 ? 'Deselect all' : 'Select all'}
+                  </button>
+                </div>
+              )}
               {media.map((m) => (
-                <div key={m.id} className="flex items-center gap-3 border border-white/10 rounded-lg p-3">
+                <div key={m.id} className="flex items-center gap-3 border border-white/10 rounded-lg p-3 group">
+                  <div className="flex-shrink-0">
+                    <input
+                      type="checkbox"
+                      checked={selectedMedia.has(m.id)}
+                      onChange={() => toggleMediaSelection(m.id)}
+                      className="rounded border-white/10 text-[#d3b88b] focus:ring-0"
+                    />
+                  </div>
                   <div className="h-16 w-20 shrink-0 overflow-hidden rounded-md bg-black/20 flex items-center justify-center">
                     {m.mediaType === 'image' ? (
                       <ImageIcon size={20} className="text-[#a99d84]" />
@@ -400,7 +463,7 @@ const [form, setForm] = useState<CollectionForm>({
                   </div>
                   <button
                     type="button"
-                    onClick={() => handleRemoveMedia(m)}
+                    onClick={() => handleRemoveSingleMedia(m)}
                     className="text-xs text-[#a99d84] hover:text-red-300"
                   >
                     <Trash2 size={16} />

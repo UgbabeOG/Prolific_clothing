@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, Search, Heart, User, ShoppingBag, Settings } from 'lucide-react';
+import { Menu, Search, Heart, User, ShoppingBag, ShieldCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { MobileMenu } from './MobileMenu';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -21,10 +21,10 @@ const navItems = [
 ];
 
 const adminNavItems = [
-  { label: 'Style Library', href: '/admin/styles' },
-  { label: 'Orders', href: '/admin/orders' },
   { label: 'Products', href: '/admin/products' },
   { label: 'Collections', href: '/admin/collections' },
+  { label: 'Orders', href: '/admin/orders' },
+  { label: 'Style Library', href: '/admin/styles' },
 ];
 
 export function Header() {
@@ -33,7 +33,7 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [isLightTheme, setIsLightTheme] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [adminChecked, setAdminChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
   const { toggleCart, itemCount } = useCart();
 
   useEffect(() => {
@@ -61,9 +61,9 @@ export function Header() {
           setIsAdmin(true);
         }
       } catch {
-        // Supabase not configured or auth error; admin links stay hidden
+        // Supabase not configured or auth error
       } finally {
-        if (active) setAdminChecked(true);
+        if (active) setChecked(true);
       }
     };
     void checkAdmin();
@@ -117,16 +117,21 @@ export function Header() {
               <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
-          {isAdmin && adminNavItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="relative text-sm uppercase tracking-[0.26em] text-[#d3b88b] transition hover:text-white"
-            >
-              {item.label}
-              <span className="mt-2 block h-[1px] w-0 bg-[#d3b88b] transition-all duration-300 group-hover:w-full" />
-            </Link>
-          ))}
+          {isAdmin && checked && (
+            <>
+              <span className="text-xs uppercase tracking-[0.26em] text-[#b8a88d]">Admin</span>
+              {adminNavItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition hover:text-white"
+                >
+                  {item.label}
+                  <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+                </Link>
+              ))}
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
@@ -139,16 +144,6 @@ export function Header() {
           >
             <Search size={18} />
           </button>
-          {isAdmin && (
-            <Link
-              href="/admin/styles"
-              className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
-              aria-label="Admin"
-              data-tooltip="Admin"
-            >
-              <Settings size={18} />
-            </Link>
-          )}
           <button
             type="button"
             className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
@@ -183,9 +178,8 @@ export function Header() {
         </div>
       </div>
 
-      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} onSearchOpen={() => setSearchOpen(true)} isAdmin={isAdmin} adminChecked={adminChecked} />
+      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} onSearchOpen={() => setSearchOpen(true)} />
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }
-
