@@ -27,6 +27,16 @@ export type PublicCollectionMedia = {
   id: string;
   mediaType: 'image' | 'video';
   mediaUrl: string;
+  product?: {
+    id: string;
+    name: string;
+    price: number;
+    slug: string;
+    category: string;
+    sizes: string[];
+    colors: { name: string; hex: string }[];
+    images: string[];
+  };
 };
 
 const productSelection = `
@@ -203,7 +213,13 @@ export async function getPublicCollectionMedia(collectionId: string): Promise<Pu
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from('collection_media')
-    .select('id, media_type, media_path, sort_order')
+    .select(`
+      id, media_type, media_path, sort_order,
+      product:products(id, name, price, slug, category,
+        media:product_media(media_type, media_path, sort_order),
+        variants:product_variants(size, color_name, color_hex, is_active)
+      )
+    `)
     .eq('collection_id', collectionId)
     .order('sort_order', { ascending: true });
 
@@ -214,12 +230,42 @@ export async function getPublicCollectionMedia(collectionId: string): Promise<Pu
   const media = await Promise.all((data as any[]).map(async (row) => {
     const { data: urlData, error: urlError } = await supabase.storage.from('product-media').createSignedUrl(row.media_path, 60 * 60);
     if (urlError) return null;
+
+    let product;
+    if (row.product) {
+      const p = row.product;
+      const mediaRows = (p.media ?? []).sort((a: any, b: any) => a.sort_order - b.sort_order);
+      const images = mediaRows.filter((m: any) => m.media_type === 'image').map((m: any) => m.media_path);
+      const variants = p.variants ?? [];
+
+      // Resolve signed URLs for product images
+      const resolvedImages = await Promise.all(images.map((imgPath: string) => getPublicProductMediaUrl(supabase, imgPath)));
+
+      product = {
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        slug: p.slug,
+        category: p.category,
+        sizes: [...new Set(variants.filter((v: any) => v.is_active).map((v: any) => v.size))] as string[],
+        colors: variants
+          .filter((v: any) => v.is_active)
+          .reduce((acc: { name: string; hex: string }[], v: any) => {
+            const exists = acc.find((c) => c.name === v.color_name && c.hex === v.color_hex);
+            if (!exists) acc.push({ name: v.color_name, hex: v.color_hex });
+            return acc;
+          }, []),
+        images: resolvedImages,
+      };
+    }
+
     return {
       id: row.id,
       mediaType: row.media_type,
       mediaUrl: urlData.signedUrl,
+      product,
     };
   }));
 
-  return media.filter((m): m is PublicCollectionMedia => m !== null);
+  return (media.filter((m) => m !== null) as unknown) as PublicCollectionMedia[];
 }
