@@ -413,3 +413,85 @@ export async function deleteCollection(id: string) {
 
   return null;
 }
+
+export type CollectionMedia = {
+  id: string;
+  mediaType: 'image' | 'video';
+  mediaPath: string;
+  sortOrder: number;
+};
+
+export async function loadCollectionMedia(collectionId: string): Promise<CollectionMedia[]> {
+  const supabase = await requireStyleAdmin();
+  const { data, error } = await supabase
+    .from('collection_media')
+    .select('id, media_type, media_path, sort_order')
+    .eq('collection_id', collectionId)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    throw new Error(`Could not load collection media: ${error.message}`);
+  }
+
+  return (data as any[]).map((row) => ({
+    id: row.id,
+    mediaType: row.media_type,
+    mediaPath: row.media_path,
+    sortOrder: row.sort_order,
+  }));
+}
+
+export async function addCollectionMedia(input: {
+  collectionId: string;
+  mediaType: 'image' | 'video';
+  mediaPath: string;
+  sortOrder?: number;
+}) {
+  const supabase = await requireStyleAdmin();
+
+  const { data, error } = await supabase
+    .from('collection_media')
+    .insert({
+      collection_id: input.collectionId,
+      media_type: input.mediaType,
+      media_path: input.mediaPath,
+      sort_order: input.sortOrder ?? 0,
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    throw new Error(`Could not add media: ${error.message}`);
+  }
+
+  return { id: data.id };
+}
+
+export async function deleteCollectionMedia(id: string) {
+  const supabase = await requireStyleAdmin();
+
+  const { data: media, error: lookupError } = await supabase
+    .from('collection_media')
+    .select('media_path')
+    .eq('id', id)
+    .single();
+
+  if (lookupError) {
+    throw new Error(`Could not look up media: ${lookupError.message}`);
+  }
+
+  const { error } = await supabase.from('collection_media').delete().eq('id', id);
+
+  if (error) {
+    throw new Error(`Could not delete media: ${error.message}`);
+  }
+
+  if (media?.media_path) {
+    const { error: storageError } = await supabase.storage.from('product-media').remove([media.media_path]);
+    if (storageError) {
+      return `Media deleted, but file could not be removed from storage: ${storageError.message}`;
+    }
+  }
+
+  return null;
+}
