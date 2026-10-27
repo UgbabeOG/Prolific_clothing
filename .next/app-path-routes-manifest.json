@@ -1,9 +1,9 @@
 {
-  "/api/styles/route": "/api/styles",
   "/_not-found/page": "/_not-found",
+  "/api/styles/route": "/api/styles",
   "/about/page": "/about",
-  "/admin/collections/new/page": "/admin/collections/new",
   "/admin/collections/[id]/page": "/admin/collections/[id]",
+  "/admin/collections/new/page": "/admin/collections/new",
   "/admin/orders/[id]/page": "/admin/orders/[id]",
   "/admin/orders/new/page": "/admin/orders/new",
   "/admin/products/new/page": "/admin/products/new",
@@ -17,12 +17,12 @@
   "/shop/page": "/shop",
   "/studio/page": "/studio",
   "/admin/collections/page": "/admin/collections",
-  "/admin/orders/page": "/admin/orders",
   "/admin/styles/page": "/admin/styles",
-  "/admin/products/page": "/admin/products",
   "/collections/[slug]/page": "/collections/[slug]",
+  "/admin/products/page": "/admin/products",
   "/collections/page": "/collections",
   "/products/[slug]/page": "/products/[slug]",
+  "/admin/orders/page": "/admin/orders",
   "/styles/[styleId]/page": "/styles/[styleId]",
   "/styles/page": "/styles"
 }

@@ -111,7 +111,7 @@ export function Footer() {
       </div>
 
       <div className="mx-auto mt-14 max-w-7xl border-t border-white/10 pt-8 text-sm text-[#a99d84] flex items-center justify-between">
-        <span>© Prolific Clothing · prolificclothings.com</span>
+        <span>© {new Date().getFullYear()} Prolific Clothing · All rights reserved</span>
         {isAdmin && checked ? (
           <button
             onClick={signOut}
@@ -123,11 +123,12 @@ export function Footer() {
         ) : (
           <a
             href="/admin/styles"
-            className="ml-4 inline-flex items-center gap-1 text-[10px] hover:text-gold transition"
+            className="ml-4 inline-flex items-center gap-1 text-[10px] hover:text-gold transition opacity-60 hover:opacity-100"
             title="Admin login"
           >
             <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="1.5" className="opacity-50 hover:opacity-100">
-              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM15 6.732a3 3 0 11-6 0 3 3 0 016 0z" />
+              <circle cx="6" cy="6" r="5" />
+              <path d="M6 4v4M6 8v4M4 6h4M8 6h4" />
             </svg>
           </a>
         )}

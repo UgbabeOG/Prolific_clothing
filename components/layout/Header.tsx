@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, Search, Heart, User, ShoppingBag, ShieldCheck, LogOut } from 'lucide-react';
+import { Menu, Search, Heart, ShoppingBag, ShieldCheck, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { MobileMenu } from './MobileMenu';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -169,14 +169,6 @@ export function Header() {
                 data-tooltip="Search"
               >
                 <Search size={18} />
-              </button>
-              <button
-                type="button"
-                className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
-                aria-label="Account"
-                data-tooltip="Account"
-              >
-                <User size={18} />
               </button>
               <button
                 type="button"
