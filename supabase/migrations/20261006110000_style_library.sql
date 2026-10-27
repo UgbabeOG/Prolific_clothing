@@ -117,7 +117,7 @@ create table if not exists public.style_categories (
                                                                                                                       on conflict (slug) do nothing;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('style-library', 'style-library', false, 5242880, array['image/webp', 'image/jpeg', 'image/png'])
+values ('style-library', 'style-library', false, 52428800, array['image/webp', 'image/jpeg', 'image/png'])
 on conflict (id) do update
   set public = excluded.public,
       file_size_limit = excluded.file_size_limit,

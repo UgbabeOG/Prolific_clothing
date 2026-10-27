@@ -46,8 +46,8 @@ async function compressImage(file: File) {
     }, 'image/webp', 0.82);
   });
 
-  if (compressed.size > 5 * 1024 * 1024) {
-    throw new Error('The compressed image is over the 5 MB upload limit.');
+  if (compressed.size > 50 * 1024 * 1024) {
+    throw new Error('The compressed image is over the 50 MB upload limit.');
   }
   return {
     file: compressed,
