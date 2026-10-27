@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, Search, Heart, User, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { Menu, Search, Heart, User, ShoppingBag, ShieldCheck, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { MobileMenu } from './MobileMenu';
 import { SearchOverlay } from '@/components/search/SearchOverlay';
@@ -35,6 +35,17 @@ export function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checked, setChecked] = useState(false);
   const { toggleCart, itemCount } = useCart();
+
+  const signOut = async () => {
+    if (!window.confirm('Are you sure you want to sign out of the admin area?')) return;
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.auth.signOut();
+    } catch {
+      // ignore signout errors; still redirect
+    }
+    window.location.href = '/';
+  };
 
   useEffect(() => {
     const syncTheme = () => setIsLightTheme(document.documentElement.getAttribute('data-theme') === 'light');
@@ -107,17 +118,7 @@ export function Header() {
         </div>
 
         <nav className="hidden flex-1 items-center justify-center gap-8 lg:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition hover:text-white"
-            >
-              {item.label}
-              <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
-            </Link>
-          ))}
-          {isAdmin && checked && (
+          {isAdmin && checked ? (
             <>
               <span className="text-xs uppercase tracking-[0.26em] text-[#b8a88d]">Admin</span>
               {adminNavItems.map((item) => (
@@ -131,50 +132,77 @@ export function Header() {
                 </Link>
               ))}
             </>
+          ) : (
+            navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition hover:text-white"
+              >
+                {item.label}
+                <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))
           )}
         </nav>
 
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
-            aria-label="Search site"
-            onClick={() => setSearchOpen(true)}
-            data-tooltip="Search"
-          >
-            <Search size={18} />
-          </button>
-          <button
-            type="button"
-            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
-            aria-label="Account"
-            data-tooltip="Account"
-          >
-            <User size={18} />
-          </button>
-          <button
-            type="button"
-            className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
-            aria-label="Wishlist"
-            data-tooltip="Wishlist"
-          >
-            <Heart size={18} />
-          </button>
-          <ThemeToggle />
-          <button
-            type="button"
-            onClick={toggleCart}
-            className="header-btn relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold"
-            aria-label="Shopping Bag"
-            data-tooltip="Shopping Bag"
-          >
-            <ShoppingBag size={18} />
-            {itemCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gold px-1 text-[10px] font-semibold text-[#0f0d0b]">
-                {itemCount}
-              </span>
-            )}
-          </button>
+          {isAdmin && checked ? (
+            <>
+              <button
+                type="button"
+                onClick={signOut}
+                className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex text-red-300 hover:text-white"
+                aria-label="Sign out"
+                data-tooltip="Sign out"
+              >
+                <LogOut size={18} />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
+                aria-label="Search site"
+                onClick={() => setSearchOpen(true)}
+                data-tooltip="Search"
+              >
+                <Search size={18} />
+              </button>
+              <button
+                type="button"
+                className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
+                aria-label="Account"
+                data-tooltip="Account"
+              >
+                <User size={18} />
+              </button>
+              <button
+                type="button"
+                className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
+                aria-label="Wishlist"
+                data-tooltip="Wishlist"
+              >
+                <Heart size={18} />
+              </button>
+              <ThemeToggle />
+              <button
+                type="button"
+                onClick={toggleCart}
+                className="header-btn relative inline-flex h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold"
+                aria-label="Shopping Bag"
+                data-tooltip="Shopping Bag"
+              >
+                <ShoppingBag size={18} />
+                {itemCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gold px-1 text-[10px] font-semibold text-[#0f0d0b]">
+                    {itemCount}
+                  </span>
+                )}
+              </button>
+            </>
+          )}
         </div>
       </div>
 

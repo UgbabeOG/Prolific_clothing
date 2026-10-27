@@ -47,6 +47,17 @@ export function Footer() {
     };
   }, []);
 
+  const signOut = async () => {
+    if (!window.confirm('Are you sure you want to sign out of the admin area?')) return;
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.auth.signOut();
+    } catch {
+      // ignore signout errors; still redirect
+    }
+    window.location.href = '/';
+  };
+
   return (
     <footer className="border-t border-white/10 bg-[#0b0907] px-6 py-16 sm:px-8">
       <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
@@ -99,9 +110,17 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-14 max-w-7xl border-t border-white/10 pt-8 text-sm text-[#a99d84]">
-        © Prolific Clothing · prolificclothings.com
-        {!isAdmin && checked && (
+      <div className="mx-auto mt-14 max-w-7xl border-t border-white/10 pt-8 text-sm text-[#a99d84] flex items-center justify-between">
+        <span>© Prolific Clothing · prolificclothings.com</span>
+        {isAdmin && checked ? (
+          <button
+            onClick={signOut}
+            className="inline-flex items-center gap-1 text-[10px] text-red-300 hover:text-white transition"
+            title="Sign out"
+          >
+            Sign out
+          </button>
+        ) : (
           <a
             href="/admin/styles"
             className="ml-4 inline-flex items-center gap-1 text-[10px] hover:text-gold transition"

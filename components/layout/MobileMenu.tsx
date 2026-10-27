@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { X, Search, ShoppingBag, ShieldCheck } from 'lucide-react';
+import { X, Search, ShoppingBag, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase/browser';
 
@@ -47,6 +47,17 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
     };
   }, []);
 
+  const signOut = async () => {
+    if (!window.confirm('Are you sure you want to sign out of the admin area?')) return;
+    try {
+      const supabase = createSupabaseBrowserClient();
+      await supabase.auth.signOut();
+    } catch {
+      // ignore signout errors; still redirect
+    }
+    window.location.href = '/';
+  };
+
   return (
     <div className={`fixed inset-0 z-40 transition-opacity ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
@@ -64,37 +75,59 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
         </div>
 
         <nav className="mt-10 flex flex-col gap-5 text-base uppercase tracking-[0.28em] text-[#f7f1e8]">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-gold">
-              {item.label}
-            </Link>
-          ))}
-          {isAdmin && checked && (
+          {isAdmin && checked ? (
             <>
-              <div className="mt-8 mb-2 text-xs uppercase tracking-[0.28em] text-[#b8a88d]">Admin</div>
+              <div className="mb-2 text-xs uppercase tracking-[0.28em] text-[#b8a88d]">Admin</div>
               {adminNavItems.map((item) => (
                 <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-gold">
                   {item.label}
                 </Link>
               ))}
+              <button
+                type="button"
+                onClick={signOut}
+                className="mt-8 block w-full text-left px-4 py-3 text-xs uppercase tracking-[0.28em] text-red-300 hover:text-white transition"
+              >
+                <LogOut size={16} /> Sign out
+              </button>
             </>
+          ) : (
+            navItems.map((item) => (
+              <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-gold">
+                {item.label}
+              </Link>
+            ))
           )}
         </nav>
 
         <div className="mt-12 flex items-center gap-4 border-t border-white/10 pt-8">
-          <button
-            type="button"
-            onClick={() => {
-              onSearchOpen();
-              onClose();
-            }}
-            className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#f7f1e8] transition hover:text-gold"
-          >
-            <Search size={16} /> Search
-          </button>
-          <button type="button" className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#f7f1e8] transition hover:text-gold">
-            <ShoppingBag size={16} /> Bag
-          </button>
+          {isAdmin && checked ? (
+            <>
+              <button
+                type="button"
+                onClick={signOut}
+                className="inline-flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-red-300 hover:text-white transition"
+              >
+                <LogOut size={16} /> Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  onSearchOpen();
+                  onClose();
+                }}
+                className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#f7f1e8] transition hover:text-gold"
+              >
+                <Search size={16} /> Search
+              </button>
+              <button type="button" className="inline-flex items-center gap-3 text-sm uppercase tracking-[0.28em] text-[#f7f1e8] transition hover:text-gold">
+                <ShoppingBag size={16} /> Bag
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>
