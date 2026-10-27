@@ -182,6 +182,12 @@
       "regex": "^/styles(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/styles(?:/)?$"
+    },
+    {
+      "page": "/styles/saved",
+      "regex": "^/styles/saved(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/styles/saved(?:/)?$"
     }
   ],
   "dataRoutes": [],

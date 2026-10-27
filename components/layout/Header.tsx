@@ -125,7 +125,7 @@ export function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition hover:text-white"
+                  className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition-all hover:text-gold px-3 py-1.5 rounded-lg hover:bg-white/5"
                 >
                   {item.label}
                   <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
@@ -137,7 +137,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition hover:text-white"
+                className="relative text-sm uppercase tracking-[0.26em] text-[#d3c7b0] transition-all hover:text-gold px-3 py-1.5 rounded-lg hover:bg-white/5"
               >
                 {item.label}
                 <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
@@ -170,14 +170,14 @@ export function Header() {
               >
                 <Search size={18} />
               </button>
-              <button
-                type="button"
+              <Link
+                href="/styles/saved"
                 className="header-btn hidden h-11 w-11 items-center justify-center rounded-lg transition hover:border-gold hover:text-gold lg:inline-flex"
                 aria-label="Wishlist"
                 data-tooltip="Wishlist"
               >
                 <Heart size={18} />
-              </button>
+              </Link>
               <ThemeToggle />
               <button
                 type="button"
