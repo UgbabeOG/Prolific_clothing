@@ -54,15 +54,18 @@ export function normalizeStyleRecord(record: StyleQueryRecord): StyleRecord {
 
 export async function toPublicStyle(
   record: StyleRecord,
-  getPublicUrl: (path: string) => string | Promise<string>,
+  getPublicUrl: (path: string) => string | Promise<string | null>,
 ): Promise<PublicStyle | null> {
   if (!record.image_path || !record.image_width || !record.image_height || !record.category) {
     return null;
   }
 
+  const imageUrl = await getPublicUrl(record.image_path);
+  if (!imageUrl) return null;
+
   return {
     styleId: formatStyleId(record.style_number),
-    imageUrl: await getPublicUrl(record.image_path),
+    imageUrl,
     imagePath: record.image_path,
     imageWidth: record.image_width,
     imageHeight: record.image_height,

@@ -291,37 +291,11 @@
       ]
     }
   },
-  "dynamicRoutes": {
-    "/products/[slug]": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "routeRegex": "^/products/([^/]+?)(?:/)?$",
-      "dataRoute": "/products/[slug].rsc",
-      "fallback": null,
-      "dataRouteRegex": "^/products/([^/]+?)\\.rsc$",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    }
-  },
+  "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "507e60fb39a23483a7b59631f7a7bd30",
-    "previewModeSigningKey": "7b9d3b8fd549d61a4f9a0be3e9f7f086673e973aa8102200e8f692d195e16ce2",
-    "previewModeEncryptionKey": "d0bb97c88f3695c6df41dbed94bb26c85ea652f887fdc79ae50da4141c40c3d7"
+    "previewModeId": "e42cea5148e52cb774f2dd72aa7c4f9e",
+    "previewModeSigningKey": "66561ffe145bfc7a942e475f1858a527c52ceccb6382c83e8ed2cf94a7350078",
+    "previewModeEncryptionKey": "c8e1d5ca0804197c03bf641fe9487b3b5c3fe0fd63d7accbcf56919b7c875b89"
   }
 }

@@ -20,9 +20,10 @@ async function requireStyleAdmin() {
 async function getStyleImageUrl(
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
   path: string,
-) {
+): Promise<string | null> {
   const { data, error } = await supabase.storage.from(STYLE_STORAGE_BUCKET).createSignedUrl(path, 60 * 60);
   if (error) {
+    if (error.message?.includes('Object not found')) return null;
     throw new Error(`Could not create a temporary URL for a style image: ${error.message}`);
   }
   return data.signedUrl;
