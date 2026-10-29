@@ -32,7 +32,7 @@ export function StyleGallery({
   const [error, setError] = useState('');
   const requestNumber = useRef(0);
   const observerRef = useRef<HTMLDivElement>(null);
-  const observer = useRef<IntersectionObserver | null>(null);
+  const observerRefCb = useRef<IntersectionObserver | null>(null);
   const { styleIds, storageError } = useSavedStyles();
 
   const loadPage = useCallback(async (category: string, before: string | null, append: boolean) => {
@@ -61,6 +61,15 @@ export function StyleGallery({
     }
   }, []);
 
+  const observerCallback = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      if (entries[0].isIntersecting && hasMore && !loading && !error) {
+        void loadPage(selectedCategory, cursor, true);
+      }
+    },
+    [hasMore, loading, error, selectedCategory, cursor, loadPage]
+  );
+
   useEffect(() => {
     const setStylesFromInitial = () => {
       setStyles(initialStyles.slice(0, STYLE_PAGE_SIZE));
@@ -70,6 +79,22 @@ export function StyleGallery({
     setStylesFromInitial();
   }, [initialStyles]);
 
+  useEffect(() => {
+    const node = observerRef.current;
+    if (!node) return;
+
+    observerRefCb.current = new IntersectionObserver(observerCallback, {
+      threshold: 0.1,
+      rootMargin: '200px',
+    });
+    observerRefCb.current.observe(node);
+
+    return () => {
+      observerRefCb.current?.disconnect();
+      observerRefCb.current = null;
+    };
+  }, [observerCallback]);
+
   const selectCategory = (slug: string) => {
     setSelectedCategory(slug);
     setStyles([]);
@@ -77,24 +102,6 @@ export function StyleGallery({
     setHasMore(true);
     void loadPage(slug, null, false);
   };
-
-  useEffect(() => {
-    const node = observerRef.current;
-    if (!node) return;
-    observer.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore && !loading && !error) {
-          void loadPage(selectedCategory, cursor, true);
-        }
-      },
-      { threshold: 0.1, rootMargin: '200px' },
-    );
-    observer.current.observe(node);
-    return () => {
-      observer.current?.disconnect();
-      observer.current = null;
-    };
-  }, [hasMore, loading, error, selectedCategory, cursor, loadPage]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-28 pt-10 sm:px-8 sm:pt-14">

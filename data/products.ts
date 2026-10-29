@@ -6,7 +6,7 @@ export const products: Product[] = [
     slug: 'prolific-signature-shirt',
     name: 'Prolific Signature Shirt',
     category: 'Shirts',
-    price: 145000,
+    price: 30000,
     description:
       'A refined statement shirt with a tailored silhouette, timeless details, and a polished finish for distinguished dressing.',
     shortDescription: 'An elevated essential for refined wardrobes.',
@@ -23,7 +23,7 @@ export const products: Product[] = [
     slug: 'classic-native-set',
     name: 'Classic Native Set',
     category: 'Native Wear',
-    price: 285000,
+    price: 60000,
     description:
       'A carefully tailored native ensemble with crisp lines, premium fabric, and a poised silhouette for a modern African wardrobe.',
     shortDescription: 'A thoughtful native wear set with contemporary tailoring.',
