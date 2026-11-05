@@ -25,6 +25,7 @@ const adminNavItems = [
 export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onClose: () => void; onSearchOpen: () => void }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [isLightTheme, setIsLightTheme] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -39,6 +40,15 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
       document.body.style.overflow = '';
     };
   }, [open]);
+
+  useEffect(() => {
+    const syncTheme = () => setIsLightTheme(document.documentElement.getAttribute('data-theme') === 'light');
+    syncTheme();
+    document.documentElement.addEventListener('themechange', syncTheme as EventListener);
+    return () => {
+      document.documentElement.removeEventListener('themechange', syncTheme as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -75,7 +85,7 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
   return (
     <div className={`fixed inset-0 z-40 transition-opacity ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="absolute right-0 top-0 h-full w-full max-w-xs bg-[#0b0907]/95 p-6 shadow-2xl transition-transform backdrop-blur-md ${open ? 'translate-x-0' : 'translate-x-full'}">
+      <div className="absolute right-0 top-0 h-full w-full max-w-xs p-6 shadow-2xl transition-transform backdrop-blur-md ${open ? 'translate-x-0' : 'translate-x-full'}" style={{ backgroundColor: isLightTheme ? 'rgba(255,255,255,0.95)' : 'rgba(11,9,7,0.95)' }}>
         <div className="flex items-center justify-between">
           <span className="text-sm uppercase tracking-[0.32em] text-[#d2b88f]">Menu</span>
           <button
@@ -93,8 +103,9 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
             <>
               <div className="mb-2 text-xs uppercase tracking-[0.28em] text-[#b8a88d]">Admin</div>
               {adminNavItems.map((item) => (
-                <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-gold">
+                <Link key={item.href} href={item.href} onClick={onClose} className="relative text-sm uppercase tracking-[0.28em] transition-all hover:text-gold px-3 py-1.5 rounded-lg hover:bg-white/5">
                   {item.label}
+                  <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
                 </Link>
               ))}
               <button
@@ -107,8 +118,9 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
             </>
           ) : (
             navItems.map((item) => (
-              <Link key={item.href} href={item.href} onClick={onClose} className="transition hover:text-gold">
+              <Link key={item.href} href={item.href} onClick={onClose} className="relative text-sm uppercase tracking-[0.28em] transition-all hover:text-gold px-3 py-1.5 rounded-lg hover:bg-white/5">
                 {item.label}
+                <span className="mt-2 block h-[1px] w-0 bg-gold transition-all duration-300 group-hover:w-full" />
               </Link>
             ))
           )}
