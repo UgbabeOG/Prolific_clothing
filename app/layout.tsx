@@ -6,12 +6,12 @@ import { CartDrawer } from '@/components/cart/CartDrawer';
 export const metadata: Metadata = {
   title: 'Prolific Clothing — Luxury African Menswear',
   description:
-    'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for distinguished men in Abuja, Nigeria.',
+    'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for discerning men worldwide.',
   metadataBase: new URL('https://prolificclothings.com'),
   openGraph: {
     title: 'Prolific Clothing — Luxury African Menswear',
     description:
-      'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for distinguished men in Abuja, Nigeria.',
+      'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for discerning men worldwide.',
     type: 'website',
     siteName: 'Prolific Clothing',
   },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Prolific Clothing — Luxury African Menswear',
     description:
-      'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for distinguished men in Abuja, Nigeria.',
+      'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for discerning men worldwide.',
   },
 };
 

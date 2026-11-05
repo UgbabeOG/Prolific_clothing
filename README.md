@@ -4,7 +4,7 @@ A luxury African menswear e-commerce experience built with Next.js, Tailwind CSS
 
 ## Overview
 
-Prolific Clothing is a premium African menswear brand rooted in over 14 years of tailoring experience. The brand delivers bespoke native wear, premium shirts, tailored trousers, and refined essentials for distinguished men in Abuja, Nigeria. This repository powers the customer-facing digital storefront, blending quiet luxury aesthetics with direct WhatsApp ordering and studio booking.
+Prolific Clothing is a premium African menswear brand rooted in over 14 years of tailoring experience. The brand delivers bespoke native wear, premium shirts, tailored trousers, and refined essentials for distinguished men . This repository powers the customer-facing digital storefront, blending quiet luxury aesthetics with direct WhatsApp ordering and studio booking.
 
 ## Key Features
 

@@ -27,6 +27,20 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    if (open) {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
+  useEffect(() => {
     let active = true;
     const checkAdmin = async () => {
       try {

@@ -32,7 +32,8 @@ export function StyleGallery({
   const [error, setError] = useState('');
   const requestNumber = useRef(0);
   const observerRef = useRef<HTMLDivElement>(null);
-  const observerRefCb = useRef<IntersectionObserver | null>(null);
+  const observerCbRef = useRef<IntersectionObserver | null>(null);
+  const categoryRef = useRef(selectedCategory);
   const { styleIds, storageError } = useSavedStyles();
 
   const loadPage = useCallback(async (category: string, before: string | null, append: boolean) => {
@@ -64,44 +65,50 @@ export function StyleGallery({
   const observerCallback = useCallback(
     (entries: IntersectionObserverEntry[]) => {
       if (entries[0].isIntersecting && hasMore && !loading && !error) {
-        void loadPage(selectedCategory, cursor, true);
+        void loadPage(categoryRef.current, cursor, true);
       }
     },
-    [hasMore, loading, error, selectedCategory, cursor, loadPage]
+    [hasMore, loading, error, cursor, loadPage]
   );
 
-  useEffect(() => {
-    const setStylesFromInitial = () => {
-      setStyles(initialStyles.slice(0, STYLE_PAGE_SIZE));
-      setCursor(initialStyles.slice(0, STYLE_PAGE_SIZE).at(-1)?.styleId ?? null);
-      setHasMore(initialStyles.length > STYLE_PAGE_SIZE);
-    };
-    setStylesFromInitial();
+  // Keep categoryRef in sync so observerCallback always reads the latest category
+  categoryRef.current = selectedCategory;
+
+  const loadInitial = useCallback(() => {
+    setStyles(initialStyles.slice(0, STYLE_PAGE_SIZE));
+    setCursor(initialStyles.slice(0, STYLE_PAGE_SIZE).at(-1)?.styleId ?? null);
+    setHasMore(initialStyles.length > STYLE_PAGE_SIZE);
+    setError('');
   }, [initialStyles]);
 
   useEffect(() => {
-    const node = observerRef.current;
-    if (!node) return;
-
-    observerRefCb.current = new IntersectionObserver(observerCallback, {
-      threshold: 0.1,
-      rootMargin: '200px',
-    });
-    observerRefCb.current.observe(node);
-
-    return () => {
-      observerRefCb.current?.disconnect();
-      observerRefCb.current = null;
-    };
-  }, [observerCallback]);
+    loadInitial();
+  }, [loadInitial]);
 
   const selectCategory = (slug: string) => {
     setSelectedCategory(slug);
     setStyles([]);
     setCursor(null);
     setHasMore(true);
+    setError('');
     void loadPage(slug, null, false);
   };
+
+  useEffect(() => {
+    const node = observerRef.current;
+    if (!node) return;
+
+    observerCbRef.current = new IntersectionObserver(observerCallback, {
+      threshold: 0.1,
+      rootMargin: '300px',
+    });
+    observerCbRef.current.observe(node);
+
+    return () => {
+      observerCbRef.current?.disconnect();
+      observerCbRef.current = null;
+    };
+  }, [observerCallback]);
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-28 pt-10 sm:px-8 sm:pt-14">
