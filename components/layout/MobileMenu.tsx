@@ -75,7 +75,7 @@ export function MobileMenu({ open, onClose, onSearchOpen }: { open: boolean; onC
   return (
     <div className={`fixed inset-0 z-40 transition-opacity ${open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'}`}>
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className={`absolute right-0 top-0 h-full w-full max-w-xs bg-[#090806] p-6 shadow-2xl transition-transform ${open ? 'translate-x-0' : 'translate-x-full'}`} style={{ backgroundColor: 'var(--bg-overlay)' }}>
+      <div className="absolute right-0 top-0 h-full w-full max-w-xs bg-[#0b0907]/95 p-6 shadow-2xl transition-transform backdrop-blur-md ${open ? 'translate-x-0' : 'translate-x-full'}">
         <div className="flex items-center justify-between">
           <span className="text-sm uppercase tracking-[0.32em] text-[#d2b88f]">Menu</span>
           <button
