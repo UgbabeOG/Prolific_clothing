@@ -8,18 +8,24 @@ export const metadata: Metadata = {
   description:
     'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for discerning men worldwide.',
   metadataBase: new URL('https://prolificclothings.com'),
+  icons: {
+    icon: '/assets/OB_monogram_cream.svg',
+    apple: '/assets/OB_monogram_cream.svg',
+  },
   openGraph: {
     title: 'Prolific Clothing — Luxury African Menswear',
     description:
       'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for discerning men worldwide.',
     type: 'website',
     siteName: 'Prolific Clothing',
+    images: ['/assets/OB_monogram_cream.svg'],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Prolific Clothing — Luxury African Menswear',
     description:
       'Prolific Clothing creates premium African menswear, bespoke native wear, shirts, tailored trousers and refined essentials for discerning men worldwide.',
+    images: ['/assets/OB_monogram_cream.svg'],
   },
 };
 
