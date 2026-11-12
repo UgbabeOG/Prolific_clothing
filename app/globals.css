@@ -266,6 +266,7 @@ body {
 }
 
 [data-theme='light'] .text-\[\#d3b88b\],
+[data-theme='light'] .text-\[\#d2b88f\],
 [data-theme='light'] .text-\[\#a78c6f\] {
   color: var(--text-gold) !important;
 }

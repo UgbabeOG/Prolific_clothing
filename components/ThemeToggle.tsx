@@ -35,6 +35,7 @@ export function ThemeToggle() {
     setIsLight(next);
     document.documentElement.setAttribute('data-theme', next ? 'light' : 'dark');
     localStorage.setItem('theme', next ? 'light' : 'dark');
+    document.documentElement.dispatchEvent(new Event('themechange'));
   };
 
   return (
